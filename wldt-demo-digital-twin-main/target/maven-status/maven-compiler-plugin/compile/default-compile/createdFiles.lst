@@ -1,0 +1,12 @@
+io/github/wldt/demo/digital/DemoConfDigitalAdapter.class
+io/github/wldt/demo/digital/DemoDigitalAdapter.class
+io/github/wldt/demo/physical/RaspBPhysicalAdapter.class
+io/github/wldt/demo/physical/DemoConfPhysicalAdapter.class
+io/github/wldt/demo/physical/DemoPhysicalAdapterConfiguration.class
+io/github/wldt/demo/digital/DemoDigitalAdapterConfiguration.class
+io/github/wldt/demo/DemoDigitalTwin.class
+io/github/wldt/demo/DemoShadowingFunction.class
+io/github/wldt/demo/physical/DemoPhysicalAdapter.class
+io/github/wldt/demo/physical/RaspBConfPhysicalAdapter.class
+io/github/wldt/demo/PrintInfo.class
+io/github/wldt/demo/physical/RaspBPhysicalAdapterConfiguration.class
