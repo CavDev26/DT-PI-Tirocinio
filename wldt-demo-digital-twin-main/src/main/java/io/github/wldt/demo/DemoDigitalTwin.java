@@ -19,15 +19,9 @@ public class DemoDigitalTwin {
 
             WldtEngine digitalTwinEngine = new WldtEngine(new DemoShadowingFunction("test-shadowing-function"), "test-digital-twin");
 
-            //Default Physical and Digital Adapter
-            //digitalTwinEngine.addPhysicalAdapter(new DemoPhysicalAdapter("test-physical-adapter"));
-            //digitalTwinEngine.addDigitalAdapter(new DemoDigitalAdapter("test-digital-adapter"));
 
             //Physical and Digital Adapters with Configuration
-
             digitalTwinEngine.addPhysicalAdapter(new RaspBConfPhysicalAdapter("test-rasp-physical-adapter", new RaspBPhysicalAdapterConfiguration()));
-
-            //digitalTwinEngine.addPhysicalAdapter(new DemoConfPhysicalAdapter("test-physical-adapter", new DemoPhysicalAdapterConfiguration()));
             digitalTwinEngine.addDigitalAdapter(new DemoConfDigitalAdapter("test-digital-adapter", new DemoDigitalAdapterConfiguration()));
 
             digitalTwinEngine.startLifeCycle();

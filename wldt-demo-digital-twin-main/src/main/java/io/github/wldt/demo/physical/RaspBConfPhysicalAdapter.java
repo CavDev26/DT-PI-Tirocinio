@@ -16,6 +16,7 @@ import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
+import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.util.Console;
 
 import ch.qos.logback.core.joran.conditional.IfAction;
@@ -24,17 +25,24 @@ import ch.qos.logback.core.joran.conditional.IfAction;
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
 
-    /*private final static String ON_OFF_PROPERTY_KEY = "ON/OFF-property-key";
-    private final static String ON_OFF_EVENT_KEY = "ON/OFF-action-key";
-    private final static String SET_ON_OFF_ACTION_KEY = "set-ON/OFF-action-key";*/
-
     private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
     private final static String LED_ON_OFF_EVENT_KEY = "LED-action-key";
     private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
     
+    private final static String LED_PIR_ON_OFF_PROPERTY_KEY = "LED-PIR-property-key";
+    private final static String LED_PIR_ON_OFF_EVENT_KEY = "LED-PIR-action-key";
+    private final static String LED_PIR_ON_OFF_ACTION_KEY = "set-LED-PIR-ON/OFFaction-key";
+    
+    private final static String PIR_PROPERTY_KEY = "PIR-property-key";
+    private final static String PIR_EVENT_KEY = "PIR-action-key";
+    private final static String PIR_ACTION_KEY = "set-PIR-action-key"; // serve?
+    
+    
     private static int pressCount = 0;
     
-    private static final int PIN_LED = 27; // PIN 15 = BCM 22 //PIN 13 = GPIO27
+    private static final int PIN_LED = 27; //PIN 13 = BCM 27
+    private static final int PIN_PIR = 4; //PIN 7 = BCM 4
+    private static final int PIN_LED_PIR = 17; //PIN 11 = BCM 17
 
 
 
@@ -44,7 +52,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         super(id, configuration);
     }
 
-    //METODO CHE SPECIFICA COSA FARE NON APPENA SI RICEVE UN'AZIONE
+    //METODO CHE SPECIFICA COSA FARE NON APPENA SI RICEVE UN'AZIONE (Un'azione è intesa come una richiesta dal device fisico di modificare qualcosa)
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
@@ -52,28 +60,15 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
             if(physicalAssetActionWldtEvent != null
                 && physicalAssetActionWldtEvent.getActionKey().equals(LED_ON_OFF_ACTION_KEY)
                 ) {
-                //potrebbe essere utile uno switch case(?)
+
                 //specificare cosa succede quando ricevo questa azione
-                System.out.println("[RaspDemoPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
-                + "with Body: " + physicalAssetActionWldtEvent.getBody());
+                System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
+                + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
             }
-            else { //altre azini possibili, magari da gestire con uno switch
-                System.err.println("[RaspDemoPhysicalAdapter] -> Wrong action received!");
+            else {
+                System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
             }
 
-
-            //ORIGINAL
-            /*if(physicalAssetActionWldtEvent != null
-                && physicalAssetActionWldtEvent.getActionKey().equals(SET_ON_OFF_ACTION_KEY)
-                ) {
-                //potrebbe essere utile uno switch case(?)
-                //specificare cosa succede quando ricevo questa azione
-                System.out.println("[RaspDemoPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
-                + "with Body: " + physicalAssetActionWldtEvent.getBody());
-            }
-            else { //altre azini possibili, magari da gestire con uno switch
-                System.err.println("[RaspDemoPhysicalAdapter] -> Wrong action received!");
-            }*/
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -95,13 +90,12 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
     }
 
-    //PUBBLICA LA DESCRIPTION DEL PHYSICAL ADAPTER, CON TUTTE LE SUE PROPRIETA' E AZIONI CHE PUO' SVOLGERE
     private Runnable publishPhysicalAssetDescription() {
         return () -> {
             try {
-                System.out.println("[DemoRaspPhysicalAdapter] -> Sleeping before Publishing Physical Asset Description...");
+                System.out.println("[RaspPhysicalAdapter] -> Sleeping before Publishing Physical Asset Description...");
                 Thread.sleep(2000); //sleep di 2 secondi
-                System.out.println("[DemoRaspPhysicalAdapter] -> Publishing Physical Asset Description...");
+                System.out.println("[RaspPhysicalAdapter] -> Publishing Physical Asset Description...");
                 PhysicalAssetDescription pad = new PhysicalAssetDescription();
 
                 //Add a new Property associated to the target PAD with a key and a default value
@@ -110,21 +104,21 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 //Declare the availability of a target action characterized by a key, an action type
                 //and the expected content type and the request body
 
-                //valore di default della property = 0
+                //valore di default della LED property = 0
                 PhysicalAssetProperty<Integer> LEDProperty = new PhysicalAssetProperty<>(LED_ON_OFF_PROPERTY_KEY, 0);
                 pad.getProperties().add(LEDProperty);
                 PhysicalAssetEvent turningON_OFFEvent = new PhysicalAssetEvent(LED_ON_OFF_EVENT_KEY, "text/plain");
                 pad.getEvents().add(turningON_OFFEvent);
                 PhysicalAssetAction setONOFFLEDAction = new PhysicalAssetAction(LED_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
                 pad.getActions().add(setONOFFLEDAction);
-
-                //original
-                /*PhysicalAssetProperty<Integer> ONOFFProperty = new PhysicalAssetProperty<>(ON_OFF_PROPERTY_KEY, 0);
-                pad.getProperties().add(ONOFFProperty);
-                PhysicalAssetEvent turningON_OFFEvent = new PhysicalAssetEvent(ON_OFF_EVENT_KEY, "text/plain");
-                pad.getEvents().add(turningON_OFFEvent);
-                PhysicalAssetAction setONOFFAction = new PhysicalAssetAction(SET_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
-                pad.getActions().add(setONOFFAction);*/
+                
+                PhysicalAssetProperty<Integer> LEDpirProperty = new PhysicalAssetProperty<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
+                pad.getProperties().add(LEDpirProperty);
+                PhysicalAssetEvent turningON_OFF_PIR_LEDEvent = new PhysicalAssetEvent(LED_PIR_ON_OFF_EVENT_KEY, "text/plain");
+                pad.getEvents().add(turningON_OFF_PIR_LEDEvent);
+                PhysicalAssetAction setONOFFLEDPIRAction = new PhysicalAssetAction(LED_PIR_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
+                pad.getActions().add(setONOFFLEDPIRAction);
+                
                 //create Test relationship to describe that the Physical Device is inside a building
                 this.insideInRelationship = new PhysicalAssetRelationship<>("insideId");
                 pad.getRelationships().add(insideInRelationship);
@@ -139,7 +133,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     }
 
     private Runnable deviceEmulation() {
-        //QUI SI DOVRA' FARE IL COLLEGAMENTO COL RASPBERRY PER RICEVERE I DATI VERI E PROPRI
         return () -> {
             try{
                 
@@ -147,16 +140,25 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                 Scanner scanner = new Scanner(System.in);
                 
-                System.out.println("[DemoRaspPhysicalAdapter] -> Sleeping before Starting emulation...");
-                Thread.sleep(10000);
-                System.out.println("[DemoRaspPhysicalAdapter] -> Starting physical device emulation...");
-
-                //Evento per una condizione di base, se può cambiare
-                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(LED_ON_OFF_EVENT_KEY, "OFF"));
-
-                //publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(ON_OFF_EVENT_KEY, "OFF"));
-                //simulazione di ricezione di valori per generazione di eventi
-
+                System.out.println("[RaspPhysicalAdapter] -> Sleeping before Starting PI...");
+                Thread.sleep(10000);//emulation of startup time
+                System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
+    
+                var pirConfig = DigitalInput.newConfigBuilder(pi4j)
+                .id("PIR")
+                .name("Pir-mov")
+                .address(PIN_PIR)
+                .provider("pigpio-digital-input");
+                var pir = pi4j.create(pirConfig);
+                
+                var ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
+                .id("ledPir")
+                .name("LED Flasher-Pir")
+                .address(PIN_LED_PIR)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.LOW)
+                .provider("pigpio-digital-output");
+                var led_Pir = pi4j.create(ledConfigPir);
 
                 var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("led")
@@ -165,10 +167,39 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
                 .provider("pigpio-digital-output");
-                
                 var led = pi4j.create(ledConfig);
-        
+                
+                pir.addListener(s -> {
+                    try{
+                        if (s.state() == DigitalState.LOW) {
+                            System.out.println("You moved");
+                            led_Pir.high();
+                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 1);
+                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                            Thread.sleep(500);
+                            led_Pir.low();
+                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEventP = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
+                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEventP);
+                            
+                            /* (led_Pir.equals(DigitalState.HIGH)) {
+                                System.out.println("LED low");
+                                led_Pir.low();
+                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
+                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                            } else {
+                                System.out.println("LED high");
+                                led_Pir.high();
+                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 1);
+                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                            }*/
+                        }
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                    
                 while (pressCount < 5) {
+
                     System.out.println("scrivi 1 per accendere/spegnere il led:");
                     
                     int buttonInt = Integer.parseInt(scanner.nextLine());
@@ -188,61 +219,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     }
                 }
                 
-                
-                /*int acceso = 0;
-                int cambiato = 1;
-                for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
-                    Thread.sleep(getConfiguration().getMessageUpdateTime());
-                        
-                        if(led.equals(DigitalState.LOW)){
-                            if (acceso == 1){
-                                acceso = 0;
-                                cambiato = 1;
-                            } else {
-                                acceso = 0;
-                                cambiato = 0;
-                            }
-                        } else{
-                            if (acceso == 0){
-                                acceso = 1;
-                                cambiato = 1;
-                            } else {
-                                acceso = 1;
-                                cambiato = 0;
-                            }
-                        }
-                        if (cambiato == 1){
-                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, acceso);
-                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                        }
-
-                    /*if (cambiato == 1) {
-                        if(led.equals(DigitalState.LOW)){
-                            if (acceso == 1){
-                                acceso = 0;
-                                cambiato = 1;
-                            } else {
-                                acceso = 0;
-                            }
-                        } else{
-                            if (acceso == 0){
-                                acceso = 1;
-                                cambiato = 1;
-                            } else {
-                                acceso = 1;
-                            }
-                        }
-                        PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, acceso);
-                        publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                        }*/
-
-
-                    /*System.out.println("Daaaai sto aspettanto che mi scrivi qualcosaaaaa");
-                    int randomON_OFF = Integer.parseInt(scanner.nextLine());
-
-                    PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, randomON_OFF);
-                    publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);*/
-                //}
             }catch (Exception e) {
                 e.printStackTrace();
             }

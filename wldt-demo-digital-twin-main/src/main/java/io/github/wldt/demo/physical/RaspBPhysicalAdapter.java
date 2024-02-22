@@ -19,6 +19,10 @@ public class RaspBPhysicalAdapter extends PhysicalAdapter{
     private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
     private final static String LED_ON_OFF_EVENT_KEY = "LED-action-key";
     private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
+    
+    private final static String PIR_PROPERTY_KEY = "PIR-property-key";
+    private final static String PIR_EVENT_KEY = "PIR-action-key";
+    private final static String PIR_ACTION_KEY = "set-PIR-action-key"; // serve?
 
 
     private final static int MESSAGE_UPDATE_TIME = 10000;

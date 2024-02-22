@@ -175,7 +175,8 @@ public class DemoConfDigitalAdapter extends DigitalAdapter<DemoDigitalAdapterCon
                     });
 
             //Start Digital Action Emulation
-            new Thread(emulateIncomingDigitalAction()).start();
+            //For now it is not necessary to emulate one
+            //new Thread(emulateIncomingDigitalAction()).start();
 
         } catch (Exception e) {
             e.printStackTrace();
