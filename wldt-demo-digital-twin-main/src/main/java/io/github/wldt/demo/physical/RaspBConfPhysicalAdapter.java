@@ -61,7 +61,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         super(id, configuration);
     }
 
-    //METODO CHE SPECIFICA COSA FARE NON APPENA SI RICEVE UN'AZIONE (Un'azione è intesa come una richiesta dal device fisico di modificare qualcosa)
+    //METODO CHE SPECIFICA COSA FARE NON APPENA SI RICEVE UN'AZIONE (Un'azione è intesa come una richiesta dal device Digitale di modificare qualcosa)
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
