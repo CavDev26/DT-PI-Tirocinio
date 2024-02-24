@@ -225,8 +225,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             PhysicalAssetEventWldtEvent<String> newPhysicalAssetEventWldtEvent = new PhysicalAssetEventWldtEvent<String>(BUTTON_EVENT_KEY, "Pressed");
                             publishPhysicalAssetEventWldtEvent(newPhysicalAssetEventWldtEvent);
 
-
-
                             if (led.equals(DigitalState.HIGH)) {
                                 led.low();
                                 PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
