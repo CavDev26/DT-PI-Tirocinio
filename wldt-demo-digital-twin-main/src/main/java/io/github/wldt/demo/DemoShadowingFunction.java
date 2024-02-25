@@ -214,7 +214,7 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
                     physicalAssetEventWldtEvent.getBody(),
                     physicalAssetEventWldtEvent.getCreationTimestamp()));
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> DT State Notification for Event:" + physicalAssetEventWldtEvent.getPhysicalEventKey());
-            if (physicalAssetEventWldtEvent.getType().equals("BUTTON-event-key")) {
+            if (physicalAssetEventWldtEvent.getBody().equals("Pressed")) {
 
                 System.out.println("SONO DENTRO ALLA SHADOWING FUNCTION NELL'IF");
 
