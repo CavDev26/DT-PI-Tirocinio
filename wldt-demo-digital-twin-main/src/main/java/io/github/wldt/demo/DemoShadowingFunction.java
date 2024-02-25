@@ -214,14 +214,14 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
                     physicalAssetEventWldtEvent.getBody(),
                     physicalAssetEventWldtEvent.getCreationTimestamp()));
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> DT State Notification for Event:" + physicalAssetEventWldtEvent.getPhysicalEventKey());
-            if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("BUTTON_EVENT_KEY")) {
+            if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("BUTTON-event-key")) {
 
                 System.out.println("SONO DENTRO ALLA SHADOWING FUNCTION NELL'IF");
 
                 if (this.digitalTwinState.readProperty("LED_ON_OFF_PROPERTY_KEY").equals(0)){
-                    this.publishPhysicalAssetActionWldtEvent("LED_ON_OFF_ACTION_KEY", 1);
+                    this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 1);
                 } else {
-                    this.publishPhysicalAssetActionWldtEvent("LED_ON_OFF_ACTION_KEY", 0);
+                    this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 0);
                 }
             }
 
