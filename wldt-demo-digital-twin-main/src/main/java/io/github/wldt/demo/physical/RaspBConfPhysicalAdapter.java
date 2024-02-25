@@ -230,7 +230,11 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 var pi4j = this.initializeDevice();
 
-                System.out.println("Cosa c'è qua dentro?" + pi4j.properties());
+
+                for (var s : pi4j.platform().providers().values()) {
+                    System.out.println("Cosa c'è qua dentro?" + s);
+
+                }
 
 
             /*pir.addListener(s -> {
