@@ -110,6 +110,11 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 //specificare cosa succede quando ricevo questa azione
                 System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                 + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+                if (physicalAssetActionWldtEvent.getBody().equals(1)) {
+                    led.high();
+                } else {
+                    led.low();
+                }
             }
             else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
@@ -217,7 +222,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             PhysicalAssetEventWldtEvent<String> newPhysicalAssetEventWldtEvent = new PhysicalAssetEventWldtEvent<String>(BUTTON_EVENT_KEY, "Pressed");
                             publishPhysicalAssetEventWldtEvent(newPhysicalAssetEventWldtEvent);
 
-                            if (led.equals(DigitalState.HIGH)) {
+                            /*if (led.equals(DigitalState.HIGH)) {
                                 led.low();
                                 PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
                                 publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
@@ -231,152 +236,12 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                                 ledOff.low();
                                 PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 0);
                                 publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                            }
+                            }*/
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-
-
-
-
-
-
-
-
-
-
-            /*try{
-                
-                var pi4j = Pi4J.newAutoContext();
-                //Scanner scanner = new Scanner(System.in);
-                
-                System.out.println("[RaspPhysicalAdapter] -> Sleeping before Starting PI...");
-                Thread.sleep(10000);//emulation of startup time
-                System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
-    
-                var pirConfig = DigitalInput.newConfigBuilder(pi4j)
-                .id("PIR")
-                .name("Pir-mov")
-                .address(PIN_PIR)
-                .provider("pigpio-digital-input");
-                var pir = pi4j.create(pirConfig);
-                
-                var ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
-                .id("ledPir")
-                .name("LED Flasher-Pir")
-                .address(PIN_LED_PIR)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-                var led_Pir = pi4j.create(ledConfigPir);
-
-                var ledOFFConfig = DigitalOutput.newConfigBuilder(pi4j)
-                .id("ledR")
-                .name("LED-Flasher-OFF")
-                .address(PIN_LED_OFF)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
-                var ledOff = pi4j.create(ledOFFConfig);
-
-                var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
-                .id("led")
-                .name("LED Flasher")
-                .address(PIN_LED)
-                .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
-                var led = pi4j.create(ledConfig);
-
-
-
-                pir.addListener(s -> {
-                    try{
-                        if (s.state() == DigitalState.LOW) {
-                            System.out.println("You moved");
-                            led_Pir.high();
-                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 1);
-                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                            Thread.sleep(500);
-                            led_Pir.low();
-                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEventP = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
-                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEventP);
-                        }
-                    }catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                
-                var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
-                .id("BUTTON")
-                .name("Button-attuator")
-                .address(PIN_BUTTON)
-                .provider("pigpio-digital-input");
-                var button = pi4j.create(buttonConfig);
-                button.addListener(s -> {
-                    try{
-                        if (s.state() == DigitalState.LOW) {
-                            System.out.println("BUTTON PRESSED");
-
-                            //Tentativo di gestione pressione bottone tramite Evento
-                            PhysicalAssetEventWldtEvent<String> newPhysicalAssetEventWldtEvent = new PhysicalAssetEventWldtEvent<String>(BUTTON_EVENT_KEY, "Pressed");
-                            publishPhysicalAssetEventWldtEvent(newPhysicalAssetEventWldtEvent);
-
-                            if (led.equals(DigitalState.HIGH)) {
-                                led.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                            } else {
-                                led.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                            }
-                        }
-                    }catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-
-                    
-                    
-                    
-                    
-                
-                //while (pressCount < 5) {
-
-                    /*System.out.println("scrivi 1 per accendere/spegnere il led:");
-                    
-                    int buttonInt = Integer.parseInt(scanner.nextLine());
-                    
-                    if (buttonInt == 1){
-                        if (led.equals(DigitalState.HIGH)) {
-                                System.out.println("LED low");
-                                led.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                                
-                        } else {
-                                System.out.println("LED high");
-                                led.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                        }
-                    }*/
                 
                 //pi4j.shutdown();
                 
