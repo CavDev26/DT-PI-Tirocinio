@@ -8,6 +8,7 @@ import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
 
 //import java.io.Serial;
+import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -230,11 +231,12 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 var pi4j = this.initializeDevice();
 
+                System.out.println("Cosa c'è qua dentro?" + pi4j.providers().all());
 
-                for (var s : pi4j.platform().providers().values()) {
+                /*for (var s : pi4j.platform().providers().values()) {
                     System.out.println("Cosa c'è qua dentro?" + s);
 
-                }
+                }*/
 
 
             /*pir.addListener(s -> {
