@@ -188,7 +188,6 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
         try {
 
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> Variation on Property :" + physicalAssetPropertyWldtEvent.getPhysicalPropertyId());
-            System.out.println("SONO NEL CAMBIAMENTO DELLA PROPERTYYYYYYYY DAIIII");
             this.digitalTwinState.updateProperty(new DigitalTwinStateProperty<>(
                     physicalAssetPropertyWldtEvent.getPhysicalPropertyId(),
                     physicalAssetPropertyWldtEvent.getBody()));
@@ -207,6 +206,7 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
     protected void onPhysicalAssetEventNotification(PhysicalAssetEventWldtEvent<?> physicalAssetEventWldtEvent) {
         try {
 
+            System.out.println("SONO NEL CAMBIAMENTO DELL EVENTOOOOOOO DAIIII");
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> Notification for Event :" + physicalAssetEventWldtEvent.getPhysicalEventKey());
 
             this.digitalTwinState.notifyDigitalTwinStateEvent(new DigitalTwinStateEventNotification<>(
@@ -214,9 +214,7 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
                     physicalAssetEventWldtEvent.getBody(),
                     physicalAssetEventWldtEvent.getCreationTimestamp()));
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> DT State Notification for Event:" + physicalAssetEventWldtEvent.getPhysicalEventKey());
-            if (physicalAssetEventWldtEvent.getBody().equals("Pressed")) {
-
-                System.out.println("SONO DENTRO ALLA SHADOWING FUNCTION NELL'IF");
+            if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("BUTTON-event-key")) {
 
                 if (this.digitalTwinState.readProperty("LED_ON_OFF_PROPERTY_KEY").equals(0)){
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 1);

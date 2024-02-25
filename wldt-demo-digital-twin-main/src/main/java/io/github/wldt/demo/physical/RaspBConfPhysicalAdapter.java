@@ -176,6 +176,10 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 pad.getEvents().add(turningON_OFF_PIR_LEDEvent);
                 PhysicalAssetAction setONOFFLEDPIRAction = new PhysicalAssetAction(LED_PIR_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
                 pad.getActions().add(setONOFFLEDPIRAction);
+
+                PhysicalAssetEvent ButtonEvent = new PhysicalAssetEvent(BUTTON_EVENT_KEY, "text/plain");
+                pad.getEvents().add(ButtonEvent);
+
                 
                 //create Test relationship to describe that the Physical Device is inside a building
                 this.insideInRelationship = new PhysicalAssetRelationship<>("insideId");
@@ -219,8 +223,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             System.out.println("BUTTON PRESSED");
 
                             //Tentativo di gestione pressione bottone tramite Evento
-                            PhysicalAssetEventWldtEvent<String> newPhysicalAssetEventWldtEvent = new PhysicalAssetEventWldtEvent<String>(BUTTON_EVENT_KEY, "Pressed");
-                            publishPhysicalAssetEventWldtEvent(newPhysicalAssetEventWldtEvent);
+
+                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
 
                             /*if (led.equals(DigitalState.HIGH)) {
                                 led.low();
