@@ -53,6 +53,41 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     private static final int PIN_LED_OFF = 23; //PIN 16 = BCM 23
     private static final int PIN_BUTTON = 22; //PIN 15 = BCM 22
 
+    var pi4j = Pi4J.newAutoContext();
+
+    var pirConfig = DigitalInput.newConfigBuilder(pi4j)
+            .id("PIR")
+            .name("Pir-mov")
+            .address(PIN_PIR)
+            .provider("pigpio-digital-input");
+    var pir = pi4j.create(pirConfig);
+
+    var ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
+            .id("ledPir")
+            .name("LED Flasher-Pir")
+            .address(PIN_LED_PIR)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("pigpio-digital-output");
+    var led_Pir = pi4j.create(ledConfigPir);
+
+    var ledOFFConfig = DigitalOutput.newConfigBuilder(pi4j)
+            .id("ledR")
+            .name("LED-Flasher-OFF")
+            .address(PIN_LED_OFF)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.HIGH)
+            .provider("pigpio-digital-output");
+    var ledOff = pi4j.create(ledOFFConfig);
+
+    var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
+            .id("led")
+            .name("LED Flasher")
+            .address(PIN_LED)
+            .shutdown(DigitalState.LOW)
+            .initial(DigitalState.LOW)
+            .provider("pigpio-digital-output");
+    var led = pi4j.create(ledConfig);
 
 
     private PhysicalAssetRelationship<String> insideInRelationship = null;
@@ -73,6 +108,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 //specificare cosa succede quando ricevo questa azione
                 System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                 + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+
+
             }
             else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
@@ -152,14 +189,14 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         return () -> {
             try{
                 
-                var pi4j = Pi4J.newAutoContext();
+                //var pi4j = Pi4J.newAutoContext();
                 //Scanner scanner = new Scanner(System.in);
                 
                 System.out.println("[RaspPhysicalAdapter] -> Sleeping before Starting PI...");
                 Thread.sleep(10000);//emulation of startup time
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
     
-                var pirConfig = DigitalInput.newConfigBuilder(pi4j)
+                /*var pirConfig = DigitalInput.newConfigBuilder(pi4j)
                 .id("PIR")
                 .name("Pir-mov")
                 .address(PIN_PIR)
@@ -192,7 +229,9 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 .initial(DigitalState.LOW)
                 .provider("pigpio-digital-output");
                 var led = pi4j.create(ledConfig);
-                
+                */
+
+
                 pir.addListener(s -> {
                     try{
                         if (s.state() == DigitalState.LOW) {
