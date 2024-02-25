@@ -205,10 +205,7 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
     @Override
     protected void onPhysicalAssetEventNotification(PhysicalAssetEventWldtEvent<?> physicalAssetEventWldtEvent) {
         try {
-
-            System.out.println("SONO NEL CAMBIAMENTO DELL EVENTOOOOOOO DAIIII");
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> Notification for Event :" + physicalAssetEventWldtEvent.getPhysicalEventKey());
-
             this.digitalTwinState.notifyDigitalTwinStateEvent(new DigitalTwinStateEventNotification<>(
                     physicalAssetEventWldtEvent.getPhysicalEventKey(),
                     physicalAssetEventWldtEvent.getBody(),
@@ -216,11 +213,13 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
             System.out.println("[TestShadowingFunction] -> onPhysicalAssetPropertyVariation() -> DT State Notification for Event:" + physicalAssetEventWldtEvent.getPhysicalEventKey());
             if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("BUTTON-event-key")) {
 
-                if (this.digitalTwinState.readProperty("LED-property-key").equals(0)){
+                System.out.println("Stampo un sec la property" + this.digitalTwinState.readProperty("LED-property-key"));
+                publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 1);
+                /*if (this.digitalTwinState.readProperty("LED-property-key").equals(0)){
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 1);
                 } else {
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 0);
-                }
+                }*/
             }
 
         } catch (Exception e) {
