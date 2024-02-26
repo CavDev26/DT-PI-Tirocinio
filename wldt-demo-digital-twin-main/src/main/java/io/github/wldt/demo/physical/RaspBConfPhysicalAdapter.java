@@ -160,11 +160,11 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
             if (physicalAssetActionWldtEvent.getBody().equals(1)) {
                 led.high();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 1);
+                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
                 publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
             } else {
                 led.low();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
+                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
                 publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
             }
         }catch(Exception e){
