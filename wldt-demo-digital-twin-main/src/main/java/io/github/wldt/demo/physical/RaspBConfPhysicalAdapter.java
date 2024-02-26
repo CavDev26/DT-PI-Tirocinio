@@ -188,10 +188,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             System.out.println("MOVEMENT DETECTED");
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
                         }
-                        /*if (pir.state() == DigitalState.HIGH) {
-                            System.out.println("MOVEMENT DETECTED");
-                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
-                        }*/
                         if (button.state() == DigitalState.LOW) {
                             System.out.println("BUTTON PRESSED");
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
@@ -203,6 +199,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 pi4j.shutdown();
 
 
+                //Opzione tramite listener: più efficace, da capire quale delle due opzioni sia più funzionale
                 /*pir.addListener(s -> {
                     try{
                         if (s.state() == DigitalState.LOW) {
