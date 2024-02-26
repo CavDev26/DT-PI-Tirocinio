@@ -194,7 +194,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                 PhysicalAssetEvent ButtonEvent = new PhysicalAssetEvent(BUTTON_EVENT_KEY, "text/plain");
                 pad.getEvents().add(ButtonEvent);
-
+                PhysicalAssetEvent PIREvent = new PhysicalAssetEvent(PIR_EVENT_KEY, "text/plain");
+                pad.getEvents().add(PIREvent);
                 
                 //create Test relationship to describe that the Physical Device is inside a building
                 this.insideInRelationship = new PhysicalAssetRelationship<>("insideId");
