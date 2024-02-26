@@ -181,10 +181,14 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                 while(true){
                     try{
-                        if (pir.state() == DigitalState.HIGH) {
+                        if(pir.isHigh()) {
                             System.out.println("MOVEMENT DETECTED");
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
                         }
+                        /*if (pir.state() == DigitalState.HIGH) {
+                            System.out.println("MOVEMENT DETECTED");
+                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
+                        }*/
                         if (button.state() == DigitalState.LOW) {
                             System.out.println("BUTTON PRESSED");
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
