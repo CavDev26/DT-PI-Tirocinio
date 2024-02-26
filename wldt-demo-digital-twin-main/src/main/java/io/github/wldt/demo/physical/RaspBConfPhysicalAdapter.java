@@ -178,7 +178,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
 
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors\n");
-                System.out.println(pi4j.registry());
+                System.out.println(pi4j.registry().all());
 
                 pir.addListener(s -> {
                     try{
