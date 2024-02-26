@@ -222,7 +222,7 @@ public class RaspBPShadowingFunction extends ShadowingModelFunction {
                 }
             } else if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("PIR-event-key")) {
                 this.publishPhysicalAssetActionWldtEvent("set-LED-PIR-ON/OFFaction-key", 1);
-                Thread.sleep(500);
+                Thread.sleep(500); //DA RISOLVERE, QUESTA SLEEP RALLENTA TUTTO IL SISTEMA
                 this.publishPhysicalAssetActionWldtEvent("set-LED-PIR-ON/OFFaction-key", 0);
             }
 
