@@ -179,7 +179,23 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(pi4j.registry().all() + "\n");
 
-                pir.addListener(s -> {
+                while(true){
+                    try{
+                        if (pir.state() == DigitalState.LOW) {
+                            System.out.println("MOVEMENT DETECTED");
+                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
+                        }
+                        if (button.state() == DigitalState.LOW) {
+                            System.out.println("BUTTON PRESSED");
+                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
+                        }
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                /*pir.addListener(s -> {
                     try{
                         if (s.state() == DigitalState.LOW) {
                             System.out.println("MOVEMENT DETECTED");
@@ -188,8 +204,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     }catch (Exception e) {
                         e.printStackTrace();
                     }
-                });
-                button.addListener(s -> {
+                });*/
+                /*button.addListener(s -> {
                     try{
                         if (s.state() == DigitalState.LOW) {
                             System.out.println("BUTTON PRESSED");
@@ -198,7 +214,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     }catch (Exception e) {
                         e.printStackTrace();
                     }
-                });
+                });*/
                 
                 //pi4j.shutdown();
                 
