@@ -7,10 +7,6 @@ import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
-
-//import java.io.Serial;
-import java.rmi.registry.Registry;
-import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,28 +28,19 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     
     private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
 
-
-    private static final int PIN_LED = 27; //PIN 13 = BCM 27
-    private static final int PIN_PIR = 4; //PIN 7 = BCM 4
-    private static final int PIN_LED_PIR = 17; //PIN 11 = BCM 17
-    private static final int PIN_LED_OFF = 23; //PIN 16 = BCM 23
-    private static final int PIN_BUTTON = 22; //PIN 15 = BCM 22
-
-
-
     Context pi4j = Pi4J.newAutoContext();
 
     DigitalInputConfigBuilder pirConfig = DigitalInput.newConfigBuilder(pi4j)
             .id("PIR")
             .name("Pir-mov")
-            .address(PIN_PIR)
+            .address(getConfiguration().getPin_pir())
             .provider("pigpio-digital-input");
     DigitalInput pir = pi4j.create(pirConfig);
 
     DigitalOutputConfigBuilder ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
             .id("ledPir")
             .name("LED Flasher-Pir")
-            .address(PIN_LED_PIR)
+            .address(getConfiguration().getPin_led_pir())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW)
             .provider("pigpio-digital-output");
@@ -62,7 +49,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     DigitalOutputConfigBuilder ledOFFConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("ledR")
             .name("LED-Flasher-OFF")
-            .address(PIN_LED_OFF)
+            .address(getConfiguration().getPin_led_off())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.HIGH)
             .provider("pigpio-digital-output");
@@ -71,7 +58,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("led")
             .name("LED Flasher")
-            .address(PIN_LED)
+            .address(getConfiguration().getPin_led())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW)
             .provider("pigpio-digital-output");
@@ -80,7 +67,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     DigitalInputConfigBuilder buttonConfig = DigitalInput.newConfigBuilder(pi4j)
             .id("BUTTON")
             .name("Button-attuator")
-            .address(PIN_BUTTON)
+            .address(getConfiguration().getPin_button())
             .provider("pigpio-digital-input");
     DigitalInput button = pi4j.create(buttonConfig);
 
