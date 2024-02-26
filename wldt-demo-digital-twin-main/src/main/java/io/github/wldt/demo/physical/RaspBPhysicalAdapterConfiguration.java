@@ -2,8 +2,8 @@ package io.github.wldt.demo.physical;
 
 public class RaspBPhysicalAdapterConfiguration {
 
-    private final static int MESSAGE_UPDATE_TIME = 1000;
-    private final static int MESSAGE_UPDATE_NUMBER = 10;
+    private final static int MESSAGE_UPDATE_TIME = 500;
+    private final static int MESSAGE_UPDATE_NUMBER = 100;
 
 
     private static final int PIN_LED = 27; //PIN 13 = BCM 27

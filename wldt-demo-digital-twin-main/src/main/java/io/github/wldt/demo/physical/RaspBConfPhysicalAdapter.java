@@ -179,7 +179,10 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(pi4j.registry().all() + "\n");
 
-                while(true){
+                for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
+
+                    //Sleep to emulate sensor measurement
+                    Thread.sleep(getConfiguration().getMessageUpdateTime());
                     try{
                         if(pir.isHigh()) {
                             System.out.println("MOVEMENT DETECTED");
@@ -197,6 +200,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                         e.printStackTrace();
                     }
                 }
+                pi4j.shutdown();
 
 
                 /*pir.addListener(s -> {
