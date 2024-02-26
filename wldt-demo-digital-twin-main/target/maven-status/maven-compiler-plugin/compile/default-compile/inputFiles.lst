@@ -4,6 +4,5 @@
 /home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/PrintInfo.java
 /home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/digital/DemoDigitalAdapter.java
 /home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/RaspBPShadowingFunction.java
-/home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/physical/RaspBPhysicalAdapter.java
 /home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/physical/RaspBConfPhysicalAdapter.java
 /home/pi/Desktop/TirocinioFromGit/DT-PI-Tirocinio/wldt-demo-digital-twin-main/src/main/java/io/github/wldt/demo/digital/DemoDigitalAdapterConfiguration.java
