@@ -28,48 +28,77 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     
     private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
 
-    Context pi4j = Pi4J.newAutoContext();
 
-    DigitalInputConfigBuilder pirConfig = DigitalInput.newConfigBuilder(pi4j)
+
+
+    //Context pi4j = Pi4J.newAutoContext();
+
+    private final static Context pi4j = Pi4J.newAutoContext();
+
+
+    private DigitalInput createAndConfigDigitalInputPI4j(String id, String SensorName, int PIN) {
+        DigitalInputConfigBuilder builder = DigitalInput.newConfigBuilder(pi4j)
+                .id(id)
+                .name(SensorName)
+                .address(PIN)
+                .provider("pigpio-digital-input");
+       return  pi4j.create(builder);
+    }
+    private DigitalOutput createAndConfigDigitalOutputPI4j(String id, String SensorName, int PIN) {
+        DigitalOutputConfigBuilder builder = DigitalOutput.newConfigBuilder(pi4j)
+                .id(id)
+                .name(SensorName)
+                .address(PIN)
+                .provider("pigpio-digital-output");
+        return pi4j.create(builder);
+    }
+
+    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "Pir",getConfiguration().getPin_pir());
+    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "Button", getConfiguration().getPin_button());
+    DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getConfiguration().getPin_led_pir());
+    DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getConfiguration().getPin_led_off());
+    DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getConfiguration().getPin_led());
+
+    /*DigitalInputConfigBuilder pirConfig = DigitalInput.newConfigBuilder(pi4j)
             .id("PIR")
             .name("Pir-mov")
             .address(getConfiguration().getPin_pir())
             .provider("pigpio-digital-input");
-    DigitalInput pir = pi4j.create(pirConfig);
+    DigitalInput pir = pi4j.create(pirConfig);*/
 
-    DigitalOutputConfigBuilder ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
+    /*DigitalOutputConfigBuilder ledConfigPir = DigitalOutput.newConfigBuilder(pi4j)
             .id("ledPir")
             .name("LED Flasher-Pir")
             .address(getConfiguration().getPin_led_pir())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW)
             .provider("pigpio-digital-output");
-    DigitalOutput led_Pir = pi4j.create(ledConfigPir);
+    DigitalOutput led_Pir = pi4j.create(ledConfigPir);*/
 
-    DigitalOutputConfigBuilder ledOFFConfig = DigitalOutput.newConfigBuilder(pi4j)
+    /*DigitalOutputConfigBuilder ledOFFConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("ledR")
             .name("LED-Flasher-OFF")
             .address(getConfiguration().getPin_led_off())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.HIGH)
             .provider("pigpio-digital-output");
-    DigitalOutput ledOff = pi4j.create(ledOFFConfig);
+    DigitalOutput ledOff = pi4j.create(ledOFFConfig);*/
 
-    DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
+    /*DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
             .id("led")
             .name("LED Flasher")
             .address(getConfiguration().getPin_led())
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW)
             .provider("pigpio-digital-output");
-    DigitalOutput led = pi4j.create(ledConfig);
+    DigitalOutput led = pi4j.create(ledConfig);*/
 
-    DigitalInputConfigBuilder buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+    /*DigitalInputConfigBuilder buttonConfig = DigitalInput.newConfigBuilder(pi4j)
             .id("BUTTON")
             .name("Button-attuator")
             .address(getConfiguration().getPin_button())
             .provider("pigpio-digital-input");
-    DigitalInput button = pi4j.create(buttonConfig);
+    DigitalInput button = pi4j.create(buttonConfig);*/
 
     private PhysicalAssetRelationship<String> insideInRelationship = null;
 

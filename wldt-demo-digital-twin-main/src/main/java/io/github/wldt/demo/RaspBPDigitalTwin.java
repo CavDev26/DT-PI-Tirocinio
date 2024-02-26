@@ -1,7 +1,6 @@
 package io.github.wldt.demo;
 
 import io.github.wldt.demo.digital.DemoConfDigitalAdapter;
-import io.github.wldt.demo.digital.DemoDigitalAdapter;
 import io.github.wldt.demo.digital.DemoDigitalAdapterConfiguration;
 import io.github.wldt.demo.physical.*;
 import it.wldt.core.engine.WldtEngine;
@@ -12,13 +11,12 @@ import it.wldt.core.engine.WldtEngine;
  * Date: 01/09/2023
  * Project: White Label Digital Twin Java Framework - (whitelabel-digitaltwin)
  */
-public class DemoDigitalTwin {
+public class RaspBPDigitalTwin {
 
     public static void main(String[] args)  {
         try{
 
-            WldtEngine digitalTwinEngine = new WldtEngine(new DemoShadowingFunction("test-shadowing-function"), "test-digital-twin");
-
+            WldtEngine digitalTwinEngine = new WldtEngine(new RaspBPShadowingFunction("test-shadowing-function"), "test-digital-twin");
 
             //Physical and Digital Adapters with Configuration
             digitalTwinEngine.addPhysicalAdapter(new RaspBConfPhysicalAdapter("test-rasp-physical-adapter", new RaspBPhysicalAdapterConfiguration()));

@@ -18,9 +18,9 @@ import java.util.Map;
  * Date: 01/09/2023
  * Project: White Label Digital Twin Java Framework - (whitelabel-digitaltwin)
  */
-public class DemoShadowingFunction extends ShadowingModelFunction {
+public class RaspBPShadowingFunction extends ShadowingModelFunction {
 
-    public DemoShadowingFunction(String id) {
+    public RaspBPShadowingFunction(String id) {
         super(id);
     }
 
