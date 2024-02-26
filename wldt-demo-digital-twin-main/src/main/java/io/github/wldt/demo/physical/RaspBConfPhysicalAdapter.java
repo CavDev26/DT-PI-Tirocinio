@@ -123,12 +123,26 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                             + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
                     if (physicalAssetActionWldtEvent.getBody().equals(1)) {
-                        led.high();
+                        led_Pir.high();
                         PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 1);
                         publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
                     } else {
-                        led.low();
+                        led_Pir.low();
                         PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
+                        publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                    }
+            } else if (physicalAssetActionWldtEvent != null
+                        && physicalAssetActionWldtEvent.getActionKey().equals(LED_OFF_ACTION_KEY) //Action regarding the ON/OFF property of the PIR led
+                ) {
+                    System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
+                            + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+                    if (physicalAssetActionWldtEvent.getBody().equals(1)) {
+                        ledOff.high();
+                        PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 1);
+                        publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                    } else {
+                        ledOff.low();
+                        PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 0);
                         publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
                     }
             } else {

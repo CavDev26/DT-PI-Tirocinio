@@ -214,8 +214,10 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
             if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("BUTTON-event-key")) {
                 if (this.digitalTwinState.readProperty("LED-property-key").get().getValue().equals(0)){
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 1);
+                    this.publishPhysicalAssetActionWldtEvent("LED-off-property-key", 0);
                 } else {
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 0);
+                    this.publishPhysicalAssetActionWldtEvent("LED-off-property-key", 1);
                 }
             } else if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("PIR-event-key")) {
                 this.publishPhysicalAssetActionWldtEvent("set-LED-PIR-ON/OFFaction-key", 1);
