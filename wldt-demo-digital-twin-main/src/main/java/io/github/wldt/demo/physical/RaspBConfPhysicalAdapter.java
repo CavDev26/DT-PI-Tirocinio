@@ -20,27 +20,19 @@ import com.pi4j.Pi4J;
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
 
     private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
-    private final static String LED_ON_OFF_EVENT_KEY = "LED-action-key";
-    private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key"; //??
+    private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
     
     private final static String LED_PIR_ON_OFF_PROPERTY_KEY = "LED-PIR-property-key";
-    private final static String LED_PIR_ON_OFF_EVENT_KEY = "LED-PIR-action-key";
-    private final static String LED_PIR_ON_OFF_ACTION_KEY = "set-LED-PIR-ON/OFFaction-key";//??
+    private final static String LED_PIR_ON_OFF_ACTION_KEY = "set-LED-PIR-ON/OFFaction-key";
     
-    private final static String PIR_PROPERTY_KEY = "PIR-property-key";
     private final static String PIR_EVENT_KEY = "PIR-event-key";
-    private final static String PIR_ACTION_KEY = "set-PIR-action-key"; //??
-    
+
     private final static String LED_OFF_PROPERTY_KEY = "LED-off-property-key";
-    private final static String LED_OFF_EVENT_KEY = "LED-off-action-key";
-    private final static String LED_OFF_ACTION_KEY = "set-off-LED-ON/OFFaction-key"; //??
+    private final static String LED_OFF_ACTION_KEY = "set-off-LED-ON/OFFaction-key";
     
-    //private final static String BUTTON_PROPERTY_KEY = "BUTTON-property-key";
     private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
-    //private final static String BUTTON_ACTION_KEY = "set-BUTTON-action-key"; //??
-    
-    private static int pressCount = 0;
-    
+
+
     private static final int PIN_LED = 27; //PIN 13 = BCM 27
     private static final int PIN_PIR = 4; //PIN 7 = BCM 4
     private static final int PIN_LED_PIR = 17; //PIN 11 = BCM 17
@@ -98,7 +90,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         super(id, configuration);
     }
 
-    //METODO CHE SPECIFICA COSA FARE NON APPENA SI RICEVE UN'AZIONE (Un'azione è intesa come una richiesta dal device Digitale di modificare qualcosa)
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
@@ -184,25 +175,18 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 //Declare the availability of a target action characterized by a key, an action type
                 //and the expected content type and the request body
 
-                //valore di default della LED property = 0
                 PhysicalAssetProperty<Integer> LEDProperty = new PhysicalAssetProperty<>(LED_ON_OFF_PROPERTY_KEY, 0);
                 pad.getProperties().add(LEDProperty);
-                PhysicalAssetEvent turningON_OFFEvent = new PhysicalAssetEvent(LED_ON_OFF_EVENT_KEY, "text/plain");
-                pad.getEvents().add(turningON_OFFEvent);
                 PhysicalAssetAction setONOFFLEDAction = new PhysicalAssetAction(LED_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
                 pad.getActions().add(setONOFFLEDAction);
                 
                 PhysicalAssetProperty<Integer> LEDOFFProperty = new PhysicalAssetProperty<>(LED_OFF_PROPERTY_KEY, 0);
                 pad.getProperties().add(LEDOFFProperty);
-                PhysicalAssetEvent turningOFFEvent = new PhysicalAssetEvent(LED_OFF_EVENT_KEY, "text/plain");
-                pad.getEvents().add(turningOFFEvent);
                 PhysicalAssetAction setOFFLEDAction = new PhysicalAssetAction(LED_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
                 pad.getActions().add(setOFFLEDAction);
                 
                 PhysicalAssetProperty<Integer> LEDpirProperty = new PhysicalAssetProperty<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
                 pad.getProperties().add(LEDpirProperty);
-                PhysicalAssetEvent turningON_OFF_PIR_LEDEvent = new PhysicalAssetEvent(LED_PIR_ON_OFF_EVENT_KEY, "text/plain");
-                pad.getEvents().add(turningON_OFF_PIR_LEDEvent);
                 PhysicalAssetAction setONOFFLEDPIRAction = new PhysicalAssetAction(LED_PIR_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
                 pad.getActions().add(setONOFFLEDPIRAction);
 
@@ -235,16 +219,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     try{
                         if (s.state() == DigitalState.LOW) {
                             System.out.println("You moved");
-
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
-
-                            /*led_Pir.high();
-                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 1);
-                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                            Thread.sleep(500);
-                            led_Pir.low();
-                            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEventP = new PhysicalAssetPropertyWldtEvent<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
-                            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEventP);*/
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
@@ -254,26 +229,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     try{
                         if (s.state() == DigitalState.LOW) {
                             System.out.println("BUTTON PRESSED");
-
-                            //Tentativo di gestione pressione bottone tramite Evento
-
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
-
-                            /*if (led.equals(DigitalState.HIGH)) {
-                                led.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                            } else {
-                                led.high();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(LED_ON_OFF_PROPERTY_KEY, 1);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-                                ledOff.low();
-                                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent2 = new PhysicalAssetPropertyWldtEvent<>(LED_OFF_PROPERTY_KEY, 0);
-                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent2);
-                            }*/
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
