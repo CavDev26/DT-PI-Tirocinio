@@ -126,6 +126,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     private Runnable publishPhysicalAssetDescription() {
         return () -> {
             try {
+                System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors\n");
+                System.out.println(pi4j.registry().describe());
                 System.out.println("[RaspPhysicalAdapter] -> Sleeping before Publishing Physical Asset Description...");
                 Thread.sleep(2000); //sleep di 2 secondi
                 System.out.println("[RaspPhysicalAdapter] -> Publishing Physical Asset Description...");
