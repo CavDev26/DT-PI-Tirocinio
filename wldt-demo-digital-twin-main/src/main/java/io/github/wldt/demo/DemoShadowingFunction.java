@@ -217,6 +217,10 @@ public class DemoShadowingFunction extends ShadowingModelFunction {
                 } else {
                     this.publishPhysicalAssetActionWldtEvent("set-LED-ON/OFFaction-key", 0);
                 }
+            } else if (physicalAssetEventWldtEvent.getPhysicalEventKey().equals("PIR-event-key")) {
+                this.publishPhysicalAssetActionWldtEvent("set-LED-PIR-ON/OFFaction-key", 1);
+                Thread.sleep(500);
+                this.publishPhysicalAssetActionWldtEvent("set-LED-PIR-ON/OFFaction-key", 0);
             }
 
         } catch (Exception e) {
