@@ -179,7 +179,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(pi4j.registry().all() + "\n");
 
-                for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
+                /*for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
 
                     //Sleep to emulate sensor measurement
                     Thread.sleep(getConfiguration().getMessageUpdateTime());
@@ -195,8 +195,14 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     }catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                pi4j.shutdown();
+                }*/
+
+
+                this.addListenerButton(button, BUTTON_EVENT_KEY);
+                this.addListenerPir(pir, PIR_EVENT_KEY);
+
+
+                //pi4j.shutdown();
 
 
                 //Opzione tramite listener: più efficace, da capire quale delle due opzioni sia più funzionale
@@ -227,6 +233,31 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 e.printStackTrace();
             }
         };
+    }
+
+    private void addListenerButton(DigitalInput button, String event){
+        button.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("BUTTON PRESSED");
+                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Pressed"));
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void addListenerPir(DigitalInput pir, String event) {
+        pir.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("MOVEMENT DETECTED");
+                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Moved"));
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void publishPhysicalRelationshipInstance(){
