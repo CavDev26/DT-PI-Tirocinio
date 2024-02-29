@@ -6,3 +6,7 @@ After importing the project, move to the folder with pom.xml and compile with:
 
 To execute the DT:
   sudo java -jar /target/*.java
+
+At first boot, to enable pigpio run:
+  ps aux | grep pigpiod
+  sudo killall pigpiod
