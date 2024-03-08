@@ -10,7 +10,7 @@ import it.wldt.adapter.physical.PhysicalAssetAction;
 import it.wldt.adapter.physical.PhysicalAssetEvent;
 import it.wldt.adapter.physical.PhysicalAssetProperty;
 import io.github.wldt.demo.physical.topic.Topic;
-import it.wldt.adapter.*;
+import it.wldt.adapter.physical.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
