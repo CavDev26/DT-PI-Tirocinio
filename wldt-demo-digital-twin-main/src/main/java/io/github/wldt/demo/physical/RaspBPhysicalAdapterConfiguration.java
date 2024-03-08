@@ -1,9 +1,13 @@
 package io.github.wldt.demo.physical;
 
-public class RaspBPhysicalAdapterConfiguration {
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.*;
+import com.pi4j.Pi4J;
 
-    private final static int MESSAGE_UPDATE_TIME = 500;
-    private final static int MESSAGE_UPDATE_NUMBER = 100;
+import java.util.HashMap;
+import java.util.Map;
+
+public class RaspBPhysicalAdapterConfiguration {
 
 
     private static final int PIN_LED = 27; //PIN 13 = BCM 27
@@ -12,42 +16,115 @@ public class RaspBPhysicalAdapterConfiguration {
     private static final int PIN_LED_OFF = 23; //PIN 16 = BCM 23
     private static final int PIN_BUTTON = 22; //PIN 15 = BCM 22
 
-    private int messageUpdateTime = MESSAGE_UPDATE_TIME;
-    private int messageUpdateNumber = MESSAGE_UPDATE_NUMBER;
+    private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
+    private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
+
+    private final static String LED_PIR_ON_OFF_PROPERTY_KEY = "LED-PIR-property-key";
+    private final static String LED_PIR_ON_OFF_ACTION_KEY = "set-LED-PIR-ON/OFFaction-key";
+
+    private final static String PIR_EVENT_KEY = "PIR-event-key";
+
+    private final static String LED_OFF_PROPERTY_KEY = "LED-off-property-key";
+    private final static String LED_OFF_ACTION_KEY = "set-off-LED-ON/OFFaction-key";
+
+    private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
+
+
+
     private int pin_led = PIN_LED;
     private int pin_pir = PIN_PIR;
     private int pin_led_pir = PIN_LED_PIR;
     private int pin_led_off = PIN_LED_OFF;
     private int pin_button = PIN_BUTTON;
 
+    private final static Context pi4j = Pi4J.newAutoContext();
 
-    public RaspBPhysicalAdapterConfiguration() {
+    private DigitalInput createAndConfigDigitalInputPI4j(String id, String SensorName, int PIN) {
+        DigitalInputConfigBuilder builder = DigitalInput.newConfigBuilder(pi4j)
+                .id(id)
+                .name(SensorName)
+                .address(PIN)
+                .provider("pigpio-digital-input");
+        return pi4j.create(builder);
     }
 
-    public RaspBPhysicalAdapterConfiguration(int messageUpdateTime, int messageUpdateNumber, int pin_led, int pin_pir, int pin_led_pir, int pin_led_off, int pin_button){
-        this.messageUpdateTime = messageUpdateTime;
-        this.messageUpdateNumber = messageUpdateNumber;
+    private DigitalOutput createAndConfigDigitalOutputPI4j(String id, String SensorName, int PIN, DigitalState shutdown, DigitalState initial) {
+        DigitalOutputConfigBuilder builder = DigitalOutput.newConfigBuilder(pi4j)
+                .id(id)
+                .name(SensorName)
+                .address(PIN)
+                .shutdown(shutdown)
+                .initial(initial)
+                .provider("pigpio-digital-output");
+        return pi4j.create(builder);
+    }
+
+    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "Pir", getPin_pir());
+    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "Button", getPin_button());
+    DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getPin_led_pir(), DigitalState.LOW, DigitalState.LOW);
+    DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
+    DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
+
+    private Map<String, DigitalOutput> mapOutput = new HashMap<>();
+    private Map<String, DigitalInput> mapInput = new HashMap<>();
+
+
+    private void fullFillMaps() {
+        this.mapOutput.put("PIR", led_Pir);
+        this.mapOutput.put("LED-OFF", ledOff);
+        this.mapOutput.put("LED-ON", led);
+        this.mapInput.put("PIR", pir);
+        this.mapInput.put("BUTTON", button);
+    }
+
+
+    /*private void addListenerButton(DigitalInput button, String event){
+        button.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("BUTTON PRESSED");
+                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Pressed"));
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void addListenerPir(DigitalInput pir, String event) {
+        pir.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("MOVEMENT DETECTED");
+                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Moved"));
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }*/
+
+
+    public RaspBPhysicalAdapterConfiguration() {
+        this.fullFillMaps();
+    }
+
+    public RaspBPhysicalAdapterConfiguration(int pin_led, int pin_pir, int pin_led_pir, int pin_led_off, int pin_button, DigitalInput pir, DigitalInput button, DigitalOutput led_Pir, DigitalOutput ledOff, DigitalOutput led, Map<String, DigitalOutput> mapOutput, Map<String, DigitalInput> mapInput) {
         this.pin_led = pin_led;
         this.pin_pir = pin_pir;
         this.pin_led_pir = pin_led_pir;
         this.pin_led_off = pin_led_off;
         this.pin_button = pin_button;
+        this.pir = pir;
+        this.button = button;
+        this.led_Pir = led_Pir;
+        this.ledOff = ledOff;
+        this.led = led;
+        this.mapOutput = mapOutput;
+        this.mapInput = mapInput;
     }
 
-    public int getMessageUpdateTime() {
-        return messageUpdateTime;
-    }
-
-    public void setMessageUpdateTime(int messageUpdateTime) {
-        this.messageUpdateTime = messageUpdateTime;
-    }
-
-    public int getMessageUpdateNumber() {
-        return messageUpdateNumber;
-    }
-
-    public void setMessageUpdateNumber(int messageUpdateNumber) {
-        this.messageUpdateNumber = messageUpdateNumber;
+    public Context getPI4J(){
+        return pi4j;
     }
 
     public int getPin_led() {
@@ -90,14 +167,59 @@ public class RaspBPhysicalAdapterConfiguration {
         this.pin_button = pin_button;
     }
 
+    public DigitalInput getPir() {
+        return pir;
+    }
 
+    public void setPir(DigitalInput pir) {
+        this.pir = pir;
+    }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("DemoPhysicalAdapterConfiguration{");
-        sb.append("messageUpdateTime=").append(messageUpdateTime);
-        sb.append(", messageUpdateNumber=").append(messageUpdateNumber);
-        sb.append('}');
-        return sb.toString();
+    public DigitalInput getButton() {
+        return button;
+    }
+
+    public void setButton(DigitalInput button) {
+        this.button = button;
+    }
+
+    public DigitalOutput getLed_Pir() {
+        return led_Pir;
+    }
+
+    public void setLed_Pir(DigitalOutput led_Pir) {
+        this.led_Pir = led_Pir;
+    }
+
+    public DigitalOutput getLedOff() {
+        return ledOff;
+    }
+
+    public void setLedOff(DigitalOutput ledOff) {
+        this.ledOff = ledOff;
+    }
+
+    public DigitalOutput getLed() {
+        return led;
+    }
+
+    public void setLed(DigitalOutput led) {
+        this.led = led;
+    }
+
+    public Map<String, DigitalOutput> getMapOutput() {
+        return mapOutput;
+    }
+
+    public void setMapOutput(Map<String, DigitalOutput> mapOutput) {
+        this.mapOutput = mapOutput;
+    }
+
+    public Map<String, DigitalInput> getMapInput() {
+        return mapInput;
+    }
+
+    public void setMapInput(Map<String, DigitalInput> mapInput) {
+        this.mapInput = mapInput;
     }
 }

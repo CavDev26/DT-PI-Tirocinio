@@ -9,6 +9,7 @@ import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.pi4j.Pi4J;
 
@@ -33,7 +34,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
     //Context pi4j = Pi4J.newAutoContext();
 
-    private final static Context pi4j = Pi4J.newAutoContext();
+    /*private final static Context pi4j = Pi4J.newAutoContext();
 
 
     private DigitalInput createAndConfigDigitalInputPI4j(String id, String SensorName, int PIN) {
@@ -53,14 +54,14 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 .initial(initial)
                 .provider("pigpio-digital-output");
         return pi4j.create(builder);
-    }
+    }*/
 
-    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "Pir",getConfiguration().getPin_pir());
+    /*DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "Pir",getConfiguration().getPin_pir());
     DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "Button", getConfiguration().getPin_button());
     DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getConfiguration().getPin_led_pir(), DigitalState.LOW, DigitalState.LOW);
     DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getConfiguration().getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
     DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getConfiguration().getPin_led(), DigitalState.LOW, DigitalState.LOW);
-
+*/
     private PhysicalAssetRelationship<String> insideInRelationship = null;
 
     public RaspBConfPhysicalAdapter(String id, RaspBPhysicalAdapterConfiguration configuration) {
@@ -73,13 +74,13 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
             if(physicalAssetActionWldtEvent != null
                 && physicalAssetActionWldtEvent.getActionKey().equals(LED_ON_OFF_ACTION_KEY)//Action regarding the ON/OFF property of the Button led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, led, LED_ON_OFF_PROPERTY_KEY);
+                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLed(), LED_ON_OFF_PROPERTY_KEY);
             } else if (physicalAssetActionWldtEvent != null
                     && physicalAssetActionWldtEvent.getActionKey().equals(LED_PIR_ON_OFF_ACTION_KEY) //Action regarding the ON/OFF property of the green PIR led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY);
+                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLed_Pir(), LED_PIR_ON_OFF_PROPERTY_KEY);
             } else if (physicalAssetActionWldtEvent != null
                         && physicalAssetActionWldtEvent.getActionKey().equals(LED_OFF_ACTION_KEY) //Action regarding the ON/OFF property of the red PIR led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, ledOff, LED_OFF_PROPERTY_KEY);
+                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLedOff(), LED_OFF_PROPERTY_KEY);
             } else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
             }
@@ -177,7 +178,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 Thread.sleep(10000);//emulation of startup time
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
-                System.out.println(pi4j.registry().all() + "\n");
+                System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
+                //System.out.println(pi4j.registry().all() + "\n");
 
                 /*for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
 
@@ -197,9 +199,11 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     }
                 }*/
 
+                this.addListenerButton(getConfiguration().getMapInput().get("BUTTON"), BUTTON_EVENT_KEY);
+                this.addListenerPir(getConfiguration().getMapInput().get("PIR"), PIR_EVENT_KEY);
 
-                this.addListenerButton(button, BUTTON_EVENT_KEY);
-                this.addListenerPir(pir, PIR_EVENT_KEY);
+                //this.addListenerButton(button, BUTTON_EVENT_KEY);
+                //this.addListenerPir(pir, PIR_EVENT_KEY);
 
 
                 //pi4j.shutdown();
