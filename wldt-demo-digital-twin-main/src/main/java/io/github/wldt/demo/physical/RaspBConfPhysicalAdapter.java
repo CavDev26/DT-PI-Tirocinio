@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
 
-    private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
+   /* private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
     private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
     
     private final static String LED_PIR_ON_OFF_PROPERTY_KEY = "LED-PIR-property-key";
@@ -26,7 +26,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     private final static String LED_OFF_ACTION_KEY = "set-off-LED-ON/OFFaction-key";
     
     private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
-
+*/
 
     public RaspBConfPhysicalAdapter(String id, RaspBPhysicalAdapterConfiguration configuration) {
         super(id, configuration);
@@ -40,6 +40,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 getConfiguration().getMapOutput().forEach((k, v) -> {
 
                     if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
+                        //TODO
                         notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
@@ -149,6 +150,18 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
     private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent, DigitalOutput led, String PROPERTY_KEY){
         try {
+            //TODO
+            //Da aggiornare il comportamento di modotale che possa essere eseguita ogni azione. Posso mettere dei metodi nella configuration
+            //che fanno le azioni specifiche e ognuna viene chiamata in base al tipo di azione (ad esempio se è un led, il led.high() viene passato dalla conf
+            //posso fare come esempio il fatto di voler tracciare come action la finta pressione di un pulsante che viene inviata dal digitalAdapter
+            //se quindi action == BUTTONACTION allora il comportamento pè gestito nella config e deve solo essere chiamato da questa funzione
+            //
+            //In seguito è necessario fare gli addlistener generici, nella config che vengono chiamati all'interno della device emulation (Da togliere in futuro)
+            //Magari tramite un foreach di tutti gli input, si può aggiungere una entry nei values che indichi la presenza o meno di un listener, il cui comportamento viene
+            //specificato sempre nella conf, per poi essere aggiunto al thread dentro la device emulation.
+            //Probabilente uso di foreach e di stream che mi riportano le cose giuste per poter usare la funzione di publish.
+
+
             System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                     + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
             if (physicalAssetActionWldtEvent.getBody().equals(1)) {
