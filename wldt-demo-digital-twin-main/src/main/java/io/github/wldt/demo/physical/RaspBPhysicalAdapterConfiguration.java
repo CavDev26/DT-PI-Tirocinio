@@ -4,6 +4,7 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,13 +49,13 @@ public class RaspBPhysicalAdapterConfiguration {
         return pi4j.create(builder);
     }
 
-    private DigitalOutput createAndConfigDigitalOutputPI4j(String id, String SensorName, int PIN, DigitalState shutdown, DigitalState initial) {
+    private DigitalOutput createAndConfigDigitalOutputPI4j(String id, String SensorName, int PIN, DigitalState shutdownState, DigitalState initialState) {
         DigitalOutputConfigBuilder builder = DigitalOutput.newConfigBuilder(pi4j)
                 .id(id)
                 .name(SensorName)
                 .address(PIN)
-                .shutdown(shutdown)
-                .initial(initial)
+                .shutdown(shutdownState)
+                .initial(initialState)
                 .provider("pigpio-digital-output");
         return pi4j.create(builder);
     }
@@ -65,16 +66,59 @@ public class RaspBPhysicalAdapterConfiguration {
     DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
     DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
 
-    private Map<String, DigitalOutput> mapOutput = new HashMap<>();
-    private Map<String, DigitalInput> mapInput = new HashMap<>();
+    //private Map<String, DigitalOutput> mapOutput = new HashMap<>();
+    //private Map<String, DigitalInput> mapInput = new HashMap<>();
+
+
+    private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
+
+    private Map<String, ArrayList<?>> mapInput = new HashMap<>();
 
 
     private void fullFillMaps() {
-        this.mapOutput.put("PIR", led_Pir);
-        this.mapOutput.put("LED-OFF", ledOff);
-        this.mapOutput.put("LED-ON", led);
-        this.mapInput.put("PIR", pir);
-        this.mapInput.put("BUTTON", button);
+        //map containing name as key; (sensor, Property, action) as value
+        this.mapOutput.put(led_Pir.name(), new ArrayList<>() {{
+            add(led_Pir);
+            add(LED_PIR_ON_OFF_PROPERTY_KEY);
+            add(LED_PIR_ON_OFF_ACTION_KEY);
+        }});
+
+        this.mapOutput.put(ledOff.name(), new ArrayList<>() {{
+            add(ledOff);
+            add(LED_OFF_PROPERTY_KEY);
+            add(LED_OFF_ACTION_KEY);
+        }});
+        this.mapOutput.put(led.name(), new ArrayList<>() {{
+            add(led);
+            add(LED_ON_OFF_PROPERTY_KEY);
+            add(LED_ON_OFF_ACTION_KEY);
+        }});
+
+        this.mapInput.put(pir.name(), new ArrayList<>() {{
+            add(pir);
+            add(PIR_EVENT_KEY);
+        }});
+        this.mapInput.put(button.name(), new ArrayList<>() {{
+            add(button);
+            add(BUTTON_EVENT_KEY);
+        }});
+
+        //this.mapOutput.put(led_Pir.name(), led_Pir);
+        //this.mapOutput.put(ledOff.name(), ledOff);
+        //this.mapOutput.put(led.name(), led);
+
+        //this.mapInput.put(pir.name(), pir);
+        //this.mapInput.put(button.name(), button);
+    }
+
+    public DigitalInput getInputSensorByName(String Name){
+        return (DigitalInput)mapInput.get(Name).get(0);
+    }
+    public DigitalOutput getOutputSensorByName(String Name){
+        return (DigitalOutput)mapOutput.get(Name).get(0);
+    }
+    public String getSensorEvent(String Name){
+        return (String)mapInput.get(Name).get(1);
     }
 
 
@@ -108,7 +152,7 @@ public class RaspBPhysicalAdapterConfiguration {
         this.fullFillMaps();
     }
 
-    public RaspBPhysicalAdapterConfiguration(int pin_led, int pin_pir, int pin_led_pir, int pin_led_off, int pin_button, DigitalInput pir, DigitalInput button, DigitalOutput led_Pir, DigitalOutput ledOff, DigitalOutput led, Map<String, DigitalOutput> mapOutput, Map<String, DigitalInput> mapInput) {
+    public RaspBPhysicalAdapterConfiguration(int pin_led, int pin_pir, int pin_led_pir, int pin_led_off, int pin_button, DigitalInput pir, DigitalInput button, DigitalOutput led_Pir, DigitalOutput ledOff, DigitalOutput led, Map<String, ArrayList<?>> mapOutput, Map<String, ArrayList<?>> mapInput) {
         this.pin_led = pin_led;
         this.pin_pir = pin_pir;
         this.pin_led_pir = pin_led_pir;
@@ -207,19 +251,19 @@ public class RaspBPhysicalAdapterConfiguration {
         this.led = led;
     }
 
-    public Map<String, DigitalOutput> getMapOutput() {
+    public Map<String, ArrayList<?>> getMapOutput() {
         return mapOutput;
     }
 
-    public void setMapOutput(Map<String, DigitalOutput> mapOutput) {
+    public void setMapOutput(Map<String, ArrayList<?>> mapOutput) {
         this.mapOutput = mapOutput;
     }
 
-    public Map<String, DigitalInput> getMapInput() {
+    public Map<String, ArrayList<?>> getMapInput() {
         return mapInput;
     }
 
-    public void setMapInput(Map<String, DigitalInput> mapInput) {
+    public void setMapInput(Map<String, ArrayList<?>> mapInput) {
         this.mapInput = mapInput;
     }
 }

@@ -1,6 +1,5 @@
 package io.github.wldt.demo.physical;
 
-import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import it.wldt.adapter.physical.*;
 import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
@@ -10,8 +9,6 @@ import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWl
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.pi4j.Pi4J;
 
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
@@ -32,11 +29,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
 
 
-    //Context pi4j = Pi4J.newAutoContext();
-
-    /*private final static Context pi4j = Pi4J.newAutoContext();
-
-
+    /*Context pi4j = Pi4J.newAutoContext();
     private DigitalInput createAndConfigDigitalInputPI4j(String id, String SensorName, int PIN) {
         DigitalInputConfigBuilder builder = DigitalInput.newConfigBuilder(pi4j)
                 .id(id)
@@ -90,23 +83,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         }
     }
 
-    private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent,DigitalOutput led, String PROPERTY_KEY){
-        try {
-            System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
-                    + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
-            if (physicalAssetActionWldtEvent.getBody().equals(1)) {
-                led.high();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
-                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-            } else {
-                led.low();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
-                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onAdapterStart() {
@@ -179,28 +155,12 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
-                //System.out.println(pi4j.registry().all() + "\n");
 
-                /*for(int i = 0; i < getConfiguration().getMessageUpdateNumber(); i++){
+                this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
+                this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
 
-                    //Sleep to emulate sensor measurement
-                    Thread.sleep(getConfiguration().getMessageUpdateTime());
-                    try{
-                        if(pir.isHigh()) {
-                            System.out.println("MOVEMENT DETECTED");
-                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(PIR_EVENT_KEY, "Moved"));
-                        }
-                        if (button.state() == DigitalState.LOW) {
-                            System.out.println("BUTTON PRESSED");
-                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(BUTTON_EVENT_KEY, "Pressed"));
-                        }
-                    }catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }*/
-
-                this.addListenerButton(getConfiguration().getMapInput().get("BUTTON"), BUTTON_EVENT_KEY);
-                this.addListenerPir(getConfiguration().getMapInput().get("PIR"), PIR_EVENT_KEY);
+                //this.addListenerButton(getConfiguration().getMapInput().get("BUTTON"), BUTTON_EVENT_KEY);
+                //this.addListenerPir(getConfiguration().getMapInput().get("PIR"), PIR_EVENT_KEY);
 
                 //this.addListenerButton(button, BUTTON_EVENT_KEY);
                 //this.addListenerPir(pir, PIR_EVENT_KEY);
@@ -262,6 +222,24 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 e.printStackTrace();
             }
         });
+    }
+
+    private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent,DigitalOutput led, String PROPERTY_KEY){
+        try {
+            System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
+                    + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+            if (physicalAssetActionWldtEvent.getBody().equals(1)) {
+                led.high();
+                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
+                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+            } else {
+                led.low();
+                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
+                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void publishPhysicalRelationshipInstance(){
