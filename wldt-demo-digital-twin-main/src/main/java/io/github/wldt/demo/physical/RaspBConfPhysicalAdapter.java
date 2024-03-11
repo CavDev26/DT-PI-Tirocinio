@@ -44,28 +44,28 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         try{
             //case input
 
-            /*if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapOutput(), physicalAssetActionWldtEvent.getActionKey()))
+            if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapOutput(), physicalAssetActionWldtEvent.getActionKey()))
             {
                 getConfiguration().getMapOutput().forEach((k, v) -> {
-                    System.out.println("\nSONO Dentro il primo if\n" + v.get(0) + (String)v.get(1));
+                    System.out.println("\nSONO Dentro il primo if\n" + v);
 
-                    if(v.contains(physicalAssetActionWldtEvent)) {
+                    if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
                         System.out.println("SONO DENTRO L'IF GIUSTO" + v.get(0) + (String)v.get(1));
                         notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
             }else if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapInput(), physicalAssetActionWldtEvent.getActionKey())) {
                     getConfiguration().getMapInput().forEach((k, v) -> {
-                        if(v.contains(physicalAssetActionWldtEvent)) {
+                        if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
 
                         }
                     });
             } else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
-            }*/
+            }
 
 
-            if(physicalAssetActionWldtEvent != null
+            /*if(physicalAssetActionWldtEvent != null
                 && physicalAssetActionWldtEvent.getActionKey().equals(LED_ON_OFF_ACTION_KEY)//Action regarding the ON/OFF property of the Button led
                 ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLed(), LED_ON_OFF_PROPERTY_KEY);
             } else if (physicalAssetActionWldtEvent != null
@@ -76,7 +76,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLedOff(), LED_OFF_PROPERTY_KEY);
             } else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
-            }
+            }*/
 
         }catch(Exception e){
             e.printStackTrace();
