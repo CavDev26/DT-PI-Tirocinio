@@ -6,6 +6,8 @@ import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,17 +32,26 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         super(id, configuration);
     }
 
+
+    private boolean checkPresence(Map<?, ArrayList<?>> map, String string) {
+
+        boolean result = map.values().stream().anyMatch(obj -> obj.contains(string));
+        return  result;
+    }
+
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
             //case input
-            if (physicalAssetActionWldtEvent != null && getConfiguration().getMapOutput().containsValue(physicalAssetActionWldtEvent.getActionKey())) {
+
+            if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapOutput(), physicalAssetActionWldtEvent.getActionKey()))
+            {
                 getConfiguration().getMapOutput().forEach((k, v) -> {
                     if(v.contains(physicalAssetActionWldtEvent)) {
                         notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
-            }else if (physicalAssetActionWldtEvent != null && getConfiguration().getMapInput().containsValue(physicalAssetActionWldtEvent.getActionKey())) {
+            }else if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapInput(), physicalAssetActionWldtEvent.getActionKey())) {
                     getConfiguration().getMapInput().forEach((k, v) -> {
                         if(v.contains(physicalAssetActionWldtEvent)) {
 
