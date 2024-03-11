@@ -33,36 +33,50 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     }
 
 
-    private boolean checkPresence(Map<?, ArrayList<?>> map, String string) {
+    /*private boolean checkPresence(Map<?, ArrayList<?>> map, String string) {
 
         boolean result = map.values().stream().anyMatch(obj -> obj.contains(string));
         return  result;
-    }
+    }*/
 
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
-            //case input
 
-            if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapOutput(), physicalAssetActionWldtEvent.getActionKey()))
-            {
+            if (physicalAssetActionWldtEvent != null && getConfiguration().getMapOutput().values().stream().anyMatch(obj -> obj.contains(physicalAssetActionWldtEvent.getActionKey()))) {
                 getConfiguration().getMapOutput().forEach((k, v) -> {
-                    System.out.println("\nSONO Dentro il primo if\n" + v);
 
                     if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
-                        System.out.println("SONO DENTRO L'IF GIUSTO" + v.get(0) + (String)v.get(1));
+                        notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
+                    }
+                });
+            }else if (physicalAssetActionWldtEvent != null && getConfiguration().getMapInput().values().stream().anyMatch(obj -> obj.contains(physicalAssetActionWldtEvent.getActionKey()))) {
+                getConfiguration().getMapInput().forEach((k, v) -> {
+                    if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
+                        //TODO
+                    }
+                });
+            } else {
+                System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
+            }
+
+
+            /*if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapOutput(), physicalAssetActionWldtEvent.getActionKey())) {
+                getConfiguration().getMapOutput().forEach((k, v) -> {
+
+                    if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
                         notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
             }else if (physicalAssetActionWldtEvent != null && checkPresence(getConfiguration().getMapInput(), physicalAssetActionWldtEvent.getActionKey())) {
                     getConfiguration().getMapInput().forEach((k, v) -> {
                         if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
-
+                            //TODO
                         }
                     });
             } else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
-            }
+            }*/
 
 
             /*if(physicalAssetActionWldtEvent != null
