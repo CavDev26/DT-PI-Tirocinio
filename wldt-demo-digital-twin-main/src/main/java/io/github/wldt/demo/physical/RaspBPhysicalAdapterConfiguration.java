@@ -3,10 +3,7 @@ package io.github.wldt.demo.physical;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
-import it.wldt.adapter.physical.PhysicalAssetAction;
-import it.wldt.adapter.physical.PhysicalAssetDescription;
-import it.wldt.adapter.physical.PhysicalAssetEvent;
-import it.wldt.adapter.physical.PhysicalAssetProperty;
+import it.wldt.adapter.physical.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,8 +67,9 @@ public class RaspBPhysicalAdapterConfiguration {
     DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
     DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
 
-    private void createPhysicalAssetDescription(){
+    public PhysicalAssetDescription createPhysicalAssetDescription(){
         PhysicalAssetDescription pad = new PhysicalAssetDescription();
+        PhysicalAssetRelationship<String> insideInRelationship = null;
 
         //Add a new Property associated to the target PAD with a key and a default value
         //Add the declaration of a new type of generated event associated to a event key
@@ -98,6 +96,11 @@ public class RaspBPhysicalAdapterConfiguration {
         pad.getEvents().add(ButtonEvent);
         PhysicalAssetEvent PIREvent = new PhysicalAssetEvent(PIR_EVENT_KEY, "text/plain");
         pad.getEvents().add(PIREvent);
+
+        insideInRelationship = new PhysicalAssetRelationship<>("insideId");
+        pad.getRelationships().add(insideInRelationship);
+
+        return pad;
     }
 
     //private Map<String, DigitalOutput> mapOutput = new HashMap<>();
@@ -108,10 +111,31 @@ public class RaspBPhysicalAdapterConfiguration {
 
     private Map<String, ArrayList<?>> mapInput = new HashMap<>();
 
+    private void createOutputEntrySensor(String Name, DigitalOutput digitalOutputSensor, String propertyKey, String actionKey ) {
+        this.mapOutput.put(Name, new ArrayList<>() {{
+            add(digitalOutputSensor);
+            add(propertyKey);
+            add(actionKey);
+        }});
+    }
+    private void createInputEntrySensor(String Name, DigitalInput digitalInputSensor, String eventKey) {
+        this.mapInput.put(Name, new ArrayList<>() {{
+            add(digitalInputSensor);
+            add(eventKey);
+        }});
+    }
+
 
     private void fullFillMaps() {
+
+        createOutputEntrySensor(led_Pir.name(), led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
+        createOutputEntrySensor(ledOff.name(), ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
+        createOutputEntrySensor(led.name(), led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
+
+        createInputEntrySensor(pir.name(), pir, PIR_EVENT_KEY);
+        createInputEntrySensor(button.name(), button, BUTTON_EVENT_KEY);
         //map containing name as key; (sensor, Property, action) as value
-        this.mapOutput.put(led_Pir.name(), new ArrayList<>() {{
+        /*this.mapOutput.put(led_Pir.name(), new ArrayList<>() {{
             add(led_Pir);
             add(LED_PIR_ON_OFF_PROPERTY_KEY);
             add(LED_PIR_ON_OFF_ACTION_KEY);
@@ -126,16 +150,16 @@ public class RaspBPhysicalAdapterConfiguration {
             add(led);
             add(LED_ON_OFF_PROPERTY_KEY);
             add(LED_ON_OFF_ACTION_KEY);
-        }});
+        }});*/
 
-        this.mapInput.put(pir.name(), new ArrayList<>() {{
+        /*this.mapInput.put(pir.name(), new ArrayList<>() {{
             add(pir);
             add(PIR_EVENT_KEY);
         }});
         this.mapInput.put(button.name(), new ArrayList<>() {{
             add(button);
             add(BUTTON_EVENT_KEY);
-        }});
+        }});*/
 
         //this.mapOutput.put(led_Pir.name(), led_Pir);
         //this.mapOutput.put(ledOff.name(), ledOff);
