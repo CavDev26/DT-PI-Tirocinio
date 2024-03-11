@@ -60,8 +60,8 @@ public class RaspBPhysicalAdapterConfiguration {
         return pi4j.create(builder);
     }
 
-    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "Pir", getPin_pir());
-    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "Button", getPin_button());
+    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "PIR", getPin_pir());
+    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "BUTTON", getPin_button());
     DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getPin_led_pir(), DigitalState.LOW, DigitalState.LOW);
     DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
     DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
