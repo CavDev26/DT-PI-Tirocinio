@@ -135,8 +135,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 pad.getEvents().add(PIREvent);
                 
                 //create Test relationship to describe that the Physical Device is inside a building
-                this.insideInRelationship = new PhysicalAssetRelationship<>("insideId");
-                pad.getRelationships().add(insideInRelationship);
+                //this.insideInRelationship = new PhysicalAssetRelationship<>("insideId");
+                //pad.getRelationships().add(insideInRelationship);
 
                 //notify the new pad to the DT's Shadowing Function
                 this.notifyPhysicalAdapterBound(pad);

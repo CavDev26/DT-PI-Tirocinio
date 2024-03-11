@@ -3,6 +3,10 @@ package io.github.wldt.demo.physical;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
+import it.wldt.adapter.physical.PhysicalAssetAction;
+import it.wldt.adapter.physical.PhysicalAssetDescription;
+import it.wldt.adapter.physical.PhysicalAssetEvent;
+import it.wldt.adapter.physical.PhysicalAssetProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +70,36 @@ public class RaspBPhysicalAdapterConfiguration {
     DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
     DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
 
+    private void createPhysicalAssetDescription(){
+        PhysicalAssetDescription pad = new PhysicalAssetDescription();
+
+        //Add a new Property associated to the target PAD with a key and a default value
+        //Add the declaration of a new type of generated event associated to a event key
+        //and the content type of the generated payload
+        //Declare the availability of a target action characterized by a key, an action type
+        //and the expected content type and the request body
+
+        PhysicalAssetProperty<Integer> LEDProperty = new PhysicalAssetProperty<>(LED_ON_OFF_PROPERTY_KEY, 0);
+        pad.getProperties().add(LEDProperty);
+        PhysicalAssetAction setONOFFLEDAction = new PhysicalAssetAction(LED_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
+        pad.getActions().add(setONOFFLEDAction);
+
+        PhysicalAssetProperty<Integer> LEDOFFProperty = new PhysicalAssetProperty<>(LED_OFF_PROPERTY_KEY, 0);
+        pad.getProperties().add(LEDOFFProperty);
+        PhysicalAssetAction setOFFLEDAction = new PhysicalAssetAction(LED_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
+        pad.getActions().add(setOFFLEDAction);
+
+        PhysicalAssetProperty<Integer> LEDpirProperty = new PhysicalAssetProperty<>(LED_PIR_ON_OFF_PROPERTY_KEY, 0);
+        pad.getProperties().add(LEDpirProperty);
+        PhysicalAssetAction setONOFFLEDPIRAction = new PhysicalAssetAction(LED_PIR_ON_OFF_ACTION_KEY, "ON/OFF.actuation", "text/plain");
+        pad.getActions().add(setONOFFLEDPIRAction);
+
+        PhysicalAssetEvent ButtonEvent = new PhysicalAssetEvent(BUTTON_EVENT_KEY, "text/plain");
+        pad.getEvents().add(ButtonEvent);
+        PhysicalAssetEvent PIREvent = new PhysicalAssetEvent(PIR_EVENT_KEY, "text/plain");
+        pad.getEvents().add(PIREvent);
+    }
+
     //private Map<String, DigitalOutput> mapOutput = new HashMap<>();
     //private Map<String, DigitalInput> mapInput = new HashMap<>();
 
@@ -120,32 +154,6 @@ public class RaspBPhysicalAdapterConfiguration {
     public String getSensorEvent(String Name){
         return (String)mapInput.get(Name).get(1);
     }
-
-
-    /*private void addListenerButton(DigitalInput button, String event){
-        button.addListener(s -> {
-            try{
-                if (s.state() == DigitalState.LOW) {
-                    System.out.println("BUTTON PRESSED");
-                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Pressed"));
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    private void addListenerPir(DigitalInput pir, String event) {
-        pir.addListener(s -> {
-            try{
-                if (s.state() == DigitalState.LOW) {
-                    System.out.println("MOVEMENT DETECTED");
-                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Moved"));
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
 
 
     public RaspBPhysicalAdapterConfiguration() {
