@@ -48,6 +48,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
             {
                 getConfiguration().getMapOutput().forEach((k, v) -> {
                     if(v.contains(physicalAssetActionWldtEvent)) {
+                        System.out.println("SONO DENTRO L'IF GIUSTO" + v.get(0) + (String)v.get(1));
                         notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
