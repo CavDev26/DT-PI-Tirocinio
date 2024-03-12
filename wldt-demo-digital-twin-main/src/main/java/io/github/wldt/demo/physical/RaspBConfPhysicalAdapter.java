@@ -101,6 +101,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     getConfiguration().getEvents().forEach( (e) -> {
                         try {
                             publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
+                            getConfiguration().getEvents().remove(e);
                         } catch (EventBusException ex) {
                             throw new RuntimeException(ex);
                         }
