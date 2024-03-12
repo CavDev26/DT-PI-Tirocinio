@@ -4,10 +4,13 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
 import it.wldt.adapter.physical.*;
+import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class RaspBPhysicalAdapterConfiguration {
 
@@ -41,6 +44,28 @@ public class RaspBPhysicalAdapterConfiguration {
 
     private final static Context pi4j = Pi4J.newAutoContext();
 
+    private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
+    private Map<String, ArrayList<?>> mapInput = new HashMap<>();
+
+    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "PIR", getPin_pir());
+    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "BUTTON", getPin_button());
+    DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getPin_led_pir(), DigitalState.LOW, DigitalState.LOW);
+    DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
+    DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
+
+
+    private ArrayList<String> events = new ArrayList<>();
+
+
+
+
+    /**
+     * A function that creates a new instance of a pi4j input sensor
+     * @param id
+     * @param SensorName
+     * @param PIN
+     * @return
+     */
     private DigitalInput createAndConfigDigitalInputPI4j(String id, String SensorName, int PIN) {
         DigitalInputConfigBuilder builder = DigitalInput.newConfigBuilder(pi4j)
                 .id(id)
@@ -50,6 +75,15 @@ public class RaspBPhysicalAdapterConfiguration {
         return pi4j.create(builder);
     }
 
+    /**
+     *
+     * @param id
+     * @param SensorName
+     * @param PIN
+     * @param shutdownState
+     * @param initialState
+     * @return
+     */
     private DigitalOutput createAndConfigDigitalOutputPI4j(String id, String SensorName, int PIN, DigitalState shutdownState, DigitalState initialState) {
         DigitalOutputConfigBuilder builder = DigitalOutput.newConfigBuilder(pi4j)
                 .id(id)
@@ -61,13 +95,14 @@ public class RaspBPhysicalAdapterConfiguration {
         return pi4j.create(builder);
     }
 
-    DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "PIR", getPin_pir());
-    DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "BUTTON", getPin_button());
-    DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", getPin_led_pir(), DigitalState.LOW, DigitalState.LOW);
-    DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", getPin_led_off(), DigitalState.LOW, DigitalState.HIGH);
-    DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", getPin_led(), DigitalState.LOW, DigitalState.LOW);
 
+    /**
+     * A function that permits to specify all properties, events and action Keys.
+     * @return a new instance of PhysicalAssetDescription containing all the specified properties, events, actions.
+     */
     public PhysicalAssetDescription createPhysicalAssetDescription(){
+
+        //TODO Generalize behaviour, with a function that takes all the values as input and fullfills the pad, without needing to implement all the code below.
         PhysicalAssetDescription pad = new PhysicalAssetDescription();
         PhysicalAssetRelationship<String> insideInRelationship = null;
 
@@ -103,14 +138,13 @@ public class RaspBPhysicalAdapterConfiguration {
         return pad;
     }
 
-    //private Map<String, DigitalOutput> mapOutput = new HashMap<>();
-    //private Map<String, DigitalInput> mapInput = new HashMap<>();
-
-
-    private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
-
-    private Map<String, ArrayList<?>> mapInput = new HashMap<>();
-
+    /**
+     * A Function that creates a new entry in the Output Devices Map given Name (Key) and [digitalOutputSensor, propertyKey, actionKey] (Value)
+     * @param Name Key for the map - Name identifier of the output device and its values
+     * @param digitalOutputSensor DigitalOutput device
+     * @param propertyKey propertyKey linked to the output sensor
+     * @param actionKey actionKey linked to the output device
+     */
     private void createOutputEntrySensor(String Name, DigitalOutput digitalOutputSensor, String propertyKey, String actionKey ) {
         this.mapOutput.put(Name, new ArrayList<>() {{
             add(digitalOutputSensor);
@@ -118,22 +152,38 @@ public class RaspBPhysicalAdapterConfiguration {
             add(actionKey);
         }});
     }
-    private void createInputEntrySensor(String Name, DigitalInput digitalInputSensor, String eventKey) {
+    /**
+     * A Function that creates a new entry in the Input Sensors Map given Name (Key) and [digitalInputSensor, eventKey] (Value)
+     * @param Name Key for the map - Name identifier of the sensor and its values.
+     * @param digitalInputSensor DigitalInput sensor.
+     * @param eventKey EventKey linked to the input sensor.
+     * @param actionKey ActionKey linked to the input sensor.
+     * @param type specify the sensor type from the supported ones.
+     */
+    private void createInputEntrySensor(String Name, DigitalInput digitalInputSensor, String eventKey, String actionKey, sensorType type) {
         this.mapInput.put(Name, new ArrayList<>() {{
             add(digitalInputSensor);
             add(eventKey);
+            add(actionKey);
+            add(type);
         }});
     }
+    private enum sensorType {
+        BUTTON,
+        PIR
+    }
 
-
+    /**
+     *
+     */
     private void fullFillMaps() {
 
-        createOutputEntrySensor(led_Pir.name(), led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
-        createOutputEntrySensor(ledOff.name(), ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
-        createOutputEntrySensor(led.name(), led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(led_Pir.name(), led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(ledOff.name(), ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(led.name(), led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
 
-        createInputEntrySensor(pir.name(), pir, PIR_EVENT_KEY);
-        createInputEntrySensor(button.name(), button, BUTTON_EVENT_KEY);
+        this.createInputEntrySensor(pir.name(), pir, PIR_EVENT_KEY, null, sensorType.PIR);
+        this.createInputEntrySensor(button.name(), button, BUTTON_EVENT_KEY, null, sensorType.BUTTON);
         //map containing name as key; (sensor, Property, action) as value
         /*this.mapOutput.put(led_Pir.name(), new ArrayList<>() {{
             add(led_Pir);
@@ -169,6 +219,45 @@ public class RaspBPhysicalAdapterConfiguration {
         //this.mapInput.put(button.name(), button);
     }
 
+    private void addListenerButton(DigitalInput button, String event){
+        button.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("BUTTON PRESSED");
+                    this.events.add(event);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void addListenerPir(DigitalInput pir, String event) {
+        pir.addListener(s -> {
+            try{
+                if (s.state() == DigitalState.LOW) {
+                    System.out.println("MOVEMENT DETECTED");
+                    this.events.add(event);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void startListeners() {
+        this.mapInput.forEach( (k, v) -> {
+            if(v.get(1) != null) {
+                switch ((sensorType)v.get(2)){
+                    case BUTTON:
+                        this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
+                    case PIR:
+                        this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
+                }
+            }
+        });
+    }
+
     public DigitalInput getInputSensorByName(String Name){
         return (DigitalInput)mapInput.get(Name).get(0);
     }
@@ -201,6 +290,10 @@ public class RaspBPhysicalAdapterConfiguration {
 
     public Context getPI4J(){
         return pi4j;
+    }
+
+    public ArrayList<String> getEvents(){
+        return this.events;
     }
 
     public int getPin_led() {

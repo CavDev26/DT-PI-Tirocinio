@@ -6,27 +6,10 @@ import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import it.wldt.exception.EventBusException;
 
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
-
-   /* private final static String LED_ON_OFF_PROPERTY_KEY = "LED-property-key";
-    private final static String LED_ON_OFF_ACTION_KEY = "set-LED-ON/OFFaction-key";
-    
-    private final static String LED_PIR_ON_OFF_PROPERTY_KEY = "LED-PIR-property-key";
-    private final static String LED_PIR_ON_OFF_ACTION_KEY = "set-LED-PIR-ON/OFFaction-key";
-    
-    private final static String PIR_EVENT_KEY = "PIR-event-key";
-
-    private final static String LED_OFF_PROPERTY_KEY = "LED-off-property-key";
-    private final static String LED_OFF_ACTION_KEY = "set-off-LED-ON/OFFaction-key";
-    
-    private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
-*/
 
     public RaspBConfPhysicalAdapter(String id, RaspBPhysicalAdapterConfiguration configuration) {
         super(id, configuration);
@@ -112,11 +95,30 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
 
-                this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
-                this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
-                
+                this.getConfiguration().startListeners();
+
+                for (int i = 0; i<1000; i++) {
+                    getConfiguration().getEvents().forEach( (e) -> {
+                        try {
+                            publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
+                        } catch (EventBusException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    Thread.sleep(500);
+                    i++;
+                }
+
+
+
+                //TODO POTREBBE FUNZINOANRE: fare un ciclo qui che simula il funzionamento continuo dei dispositivi, mentre nella configuration
+                //TODO inserisco
+
+                //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
+                //this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
+
                 //pi4j.shutdown();
-                
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
