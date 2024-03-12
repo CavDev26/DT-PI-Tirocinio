@@ -91,8 +91,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     private Runnable deviceEmulation() {
         return () -> {
             try{
-                System.out.println("[RaspPhysicalAdapter] -> Sleeping before Starting PI...");
-                Thread.sleep(10000);//emulation of startup time
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
@@ -101,13 +99,15 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                 for (int i = 0; i<1000; i++) {
                     if(!getConfiguration().getEvents().isEmpty()) {
-                        //ArrayList<String> toRemove = new ArrayList<>();
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
-                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
+                                //TODO
+                                //TODO Questa cosa funziona ma per qualche motivo mi genera eventi un pelo sbagliati,
+                                //TODO mi accende e spegne il led subito (sia verde che rosso).
+                                //TODO pir invece sembra funzionare.
+                                //TODO da cambiare il body, sicuramente influisce sul corretto funzionamento.
 
-                                //toRemove.add(e);
-                                //getConfiguration().getEvents().remove(e);
+                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
                             } catch (EventBusException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -117,11 +117,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                     Thread.sleep(500);
                     i++;
                 }
-
-
-
-                //TODO POTREBBE FUNZINOANRE: fare un ciclo qui che simula il funzionamento continuo dei dispositivi, mentre nella configuration
-                //TODO inserisco
 
                 //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
                 //this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
