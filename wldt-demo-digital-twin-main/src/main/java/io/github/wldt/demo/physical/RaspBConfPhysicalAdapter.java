@@ -8,6 +8,8 @@ import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetRelationshipInstanceCreatedWldtEvent;
 import it.wldt.exception.EventBusException;
 
+import java.util.ArrayList;
+
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
 
@@ -99,14 +101,18 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                 for (int i = 0; i<1000; i++) {
                     if(!getConfiguration().getEvents().isEmpty()) {
+                        //ArrayList<String> toRemove = new ArrayList<>();
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
                                 publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
-                                getConfiguration().getEvents().remove(e);
+
+                                //toRemove.add(e);
+                                //getConfiguration().getEvents().remove(e);
                             } catch (EventBusException ex) {
                                 throw new RuntimeException(ex);
                             }
                         });
+                        getConfiguration().getEvents().clear();
                     }
                     Thread.sleep(500);
                     i++;
