@@ -99,28 +99,20 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 int i = 0;
                 while (i < getConfiguration().getMaximumEvents()) {
                     if(!getConfiguration().getEvents().isEmpty()) {
-                        System.out.println("\nEVENTI-ARRAY: " + getConfiguration().getEvents() + "\n");
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
-
-
-
-
-                                //TODO PER QUALCHE MOTIVO AGGIUNGE DUE LISTENER PIR, DA CAPIRE PERCHE'.
-
-
-
-
                                 //TODO Questa cosa funziona ma per qualche motivo mi genera eventi un pelo sbagliati,
                                 //TODO mi accende e spegne il led subito (sia verde che rosso).
                                 //TODO pir invece sembra funzionare.
                                 //TODO da cambiare il body, sicuramente influisce sul corretto funzionamento.
-                                if (e.equals("BUTTON-event-key")) {
+
+                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, e));
+                                /*if (e.equals("BUTTON-event-key")) {
                                     publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
                                 }
                                 if (e.equals("PIR-event-key")) {
                                     publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Moved"));
-                                }
+                                }*/
                                 //Thread.sleep(100); //sleep tra una pubblicazione di un evento e l'altro, da verificare. questo genera dei problemi
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
