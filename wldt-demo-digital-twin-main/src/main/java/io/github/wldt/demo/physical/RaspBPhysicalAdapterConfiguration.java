@@ -57,11 +57,7 @@ public class RaspBPhysicalAdapterConfiguration {
     private Map<String, ArrayList<?>> mapInput = new HashMap<>();
     private ArrayList<String> events = new ArrayList<>();
 
-
-    //TODO debounce
     //TODO stampa incorretta di button pressed e movement detected
-    //TODO togliere sleep e magari ciclare per numero di eventi
-
     //Questo to do potrebbe dare dei problemi
     //TODO enum dei pin, così ognuno non deve guardarsi su internet che pin corrispondono, magri linko l'immagine o il sito dove vedere le properie board
 
@@ -257,6 +253,7 @@ public class RaspBPhysicalAdapterConfiguration {
     }
 
     public void startListeners() {
+        System.out.println("\nMAPPA DEGLI INPUT" + this.mapInput + "\n");
         this.mapInput.forEach( (k, v) -> {
             if(v.get(1) != null) {
                 switch ((sensorType)v.get(3)){
