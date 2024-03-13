@@ -98,9 +98,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 this.getConfiguration().startListeners();
                 int i = 0;
                 while (i < getConfiguration().getMaximumEvents()) {
-
-                    System.out.println("\nEVENTI-ARRAY: " + getConfiguration().getEvents() + "\n");
                     if(!getConfiguration().getEvents().isEmpty()) {
+                        System.out.println("\nEVENTI-ARRAY: " + getConfiguration().getEvents() + "\n");
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
                                 //TODO
