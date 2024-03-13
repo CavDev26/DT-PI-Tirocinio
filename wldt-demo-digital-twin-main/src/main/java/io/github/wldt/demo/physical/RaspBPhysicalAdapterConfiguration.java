@@ -52,6 +52,8 @@ public class RaspBPhysicalAdapterConfiguration {
 
 
     //TODO METODO DA IMPLEMENTARE DA UTENTE
+    //TODO Probabilmente queste azioni non sono da fare qui.
+    //TODO correggere ordine valori array e relative references.
     public RaspBPhysicalAdapterConfiguration() {
         this.createOutputEntrySensor(led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY, outputType.LED);
         this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY, outputType.LED);
@@ -62,6 +64,7 @@ public class RaspBPhysicalAdapterConfiguration {
     }
 
     //TODO METODO DA IMPLEMENTARE DA UTENTE
+    //TODO spostare a interfaccia.
     /**
      * A function that permits to specify all properties, events and action Keys.
      * @return a new instance of PhysicalAssetDescription containing all the specified properties, events, actions.
@@ -149,6 +152,8 @@ public class RaspBPhysicalAdapterConfiguration {
         }
     }
 
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
+    //TODO fare metodi che eseguano il comportamento in base alle action oper button e pir.
 
 
 
@@ -282,7 +287,8 @@ public class RaspBPhysicalAdapterConfiguration {
      * An enum that represents all the output devices' types that are currently supported.
      */
     private enum outputType {
-        GENERICTEST, LED
+        GENERICTEST,
+        LED
     }
     /**
      * A method that adds listeners to the input sensors only if they have an event associated to them.
@@ -304,6 +310,8 @@ public class RaspBPhysicalAdapterConfiguration {
             }
         });
     }
+
+    //TODO add documentation
     public Context getPI4J(){
         return pi4j;
     }
@@ -321,11 +329,5 @@ public class RaspBPhysicalAdapterConfiguration {
     }
     public int getMaximumEvents(){
         return MAXIMUM_EVENTS;
-    }
-    public void ledHigh(DigitalOutput led) {
-        led.high();
-    }
-    public void ledLow(DigitalOutput led) {
-        led.low();
     }
 }

@@ -33,6 +33,10 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
     }
 
+    /**
+     *
+     * @return
+     */
     private Runnable publishPhysicalAssetDescription() {
         return () -> {
             try {
@@ -46,7 +50,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         };
     }
 
-    //TODO move this behaviour the configuration space.
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
@@ -87,37 +90,19 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             throw new RuntimeException(e);
                         }
                     }
-
-
-
-
-                    if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
-                        //TODO
-                    }
                 });
             } else {
                 System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
             }
-
-
-            /*if(physicalAssetActionWldtEvent != null
-                && physicalAssetActionWldtEvent.getActionKey().equals(LED_ON_OFF_ACTION_KEY)//Action regarding the ON/OFF property of the Button led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLed(), LED_ON_OFF_PROPERTY_KEY);
-            } else if (physicalAssetActionWldtEvent != null
-                    && physicalAssetActionWldtEvent.getActionKey().equals(LED_PIR_ON_OFF_ACTION_KEY) //Action regarding the ON/OFF property of the green PIR led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLed_Pir(), LED_PIR_ON_OFF_PROPERTY_KEY);
-            } else if (physicalAssetActionWldtEvent != null
-                        && physicalAssetActionWldtEvent.getActionKey().equals(LED_OFF_ACTION_KEY) //Action regarding the ON/OFF property of the red PIR led
-                ) { notifyLedPropertyEvent(physicalAssetActionWldtEvent, getConfiguration().getLedOff(), LED_OFF_PROPERTY_KEY);
-            } else {
-                System.err.println("[RaspPhysicalAdapter] -> Wrong action received!");
-            }*/
-
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private Runnable deviceEmulation() {
         return () -> {
             try{
@@ -149,7 +134,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         };
     }
 
-    //TODO
+    //TODO Fix the relationShipInstance Situation.
     /*private void publishPhysicalRelationshipInstance(){
         try{
             String relatoinshipTarget = "building-hq";
