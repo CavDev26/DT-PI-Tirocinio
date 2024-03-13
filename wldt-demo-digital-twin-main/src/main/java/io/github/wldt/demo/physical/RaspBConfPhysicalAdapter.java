@@ -104,7 +104,6 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
 
                     if(!getConfiguration().getEventsMap().isEmpty()) {
 
-                        System.out.println("eventi: " + getConfiguration().getEventsMap());
                         //TODO passare all'utilizzo di una mappa per gli eventi, con eventKey e Body relativo da inviare (attualmente invia l'eventKey come body)
                         getConfiguration().getEventsMap().forEach( (e, b) -> {
                             try {

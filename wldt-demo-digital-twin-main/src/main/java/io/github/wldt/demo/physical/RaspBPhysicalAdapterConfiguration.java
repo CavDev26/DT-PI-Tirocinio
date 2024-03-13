@@ -239,10 +239,10 @@ public class RaspBPhysicalAdapterConfiguration {
             if(v.get(1) != null) {
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
-                        this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(2));
+                        this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(4));
                         break;
                     case PIR:
-                        this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(2));
+                        this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(4));
                         break;
                     default:
                         break;
