@@ -114,8 +114,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             }
                         });
                         i = i + getConfiguration().getEvents().size(); //da verificare quanto valga size
-                        getConfiguration().getEvents().clear();
                     }
+                    getConfiguration().getEvents().clear();
                 }
 
                 //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
