@@ -64,17 +64,33 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                             } else {
                                 //Caso in cui non c'è nessun update delle property e si necessita la sola esecuzione dell'action.
                             }
-                            //publishPhysicalAssetPropertyWldtEvent(getConfiguration().actionHandlerOutput(physicalAssetActionWldtEvent.getBody(), k));
                         } catch (EventBusException e) {
                             throw new RuntimeException(e);
                         }
-                        //notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
 
 
             }else if (physicalAssetActionWldtEvent != null && getConfiguration().getMapInput().values().stream().anyMatch(obj -> obj.contains(physicalAssetActionWldtEvent.getActionKey()))) {
                 getConfiguration().getMapInput().forEach((k, v) -> {
+                    if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
+                        System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
+                                + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+                        try {
+                            PhysicalAssetPropertyWldtEvent<?> newPhysicalPropertyEvent = getConfiguration().actionHandlerInput(physicalAssetActionWldtEvent.getBody(), k);
+                            if (newPhysicalPropertyEvent != null){
+                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                            } else {
+                                //Caso in cui non c'è nessun update delle property e si necessita la sola esecuzione dell'action.
+                            }
+                        } catch (EventBusException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+
+
+
                     if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
                         //TODO
                     }
@@ -102,39 +118,13 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         }
     }
 
-
-    private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent, DigitalOutput led, String PROPERTY_KEY){
-        try {
-            //TODO
-            System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
-                    + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
-
-
-            //this.getConfiguration().actionBehaviour(physicalAssetActionWldtEvent.getActionKey(), physicalAssetActionWldtEvent.getBody());
-
-
-
-            if (physicalAssetActionWldtEvent.getBody().equals(1)) {
-                led.high();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
-                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-            } else {
-                led.low();
-                PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
-                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
     private Runnable deviceEmulation() {
         return () -> {
             try{
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
                 System.out.println("[RaspPhysicalAdapter] -> Printing PI4J Registry of Sensors:");
                 System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
-
+                Thread.sleep(1000);
                 this.getConfiguration().startListeners();
                 int i = 0;
                 while (i < getConfiguration().getMaximumEvents()) {

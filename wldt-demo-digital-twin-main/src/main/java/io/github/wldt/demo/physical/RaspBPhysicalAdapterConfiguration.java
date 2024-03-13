@@ -133,11 +133,58 @@ public class RaspBPhysicalAdapterConfiguration {
         });
     }
 
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
     /**
-     *
-     * @param body
-     * @param k
-     * @return
+     * A method to handle an action on a LED, given the body of the action and the led.
+     * @param body Body of the action, specifying the correct behaviour
+     * @param led Led on which executing the action.
+     */
+    private void ledActionHandler(Object body, DigitalOutput led){
+        if (body.equals(1)) {
+            led.high();
+        } else if (body.equals(0)) {
+            led.low();
+        } else {
+            System.out.println("Error - wrong action body received.");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * A method that handles the behaviour upon receiving an action given the body of the action and the input key of the map of all input Sensors.
+     * @param body body of the action received.
+     * @param k key of the Input map on which the action is done.
+     * @return a new PhysicalAssetPropertyWldtEvent if the specified input Type requires it, null otherwise.
+     */
+    public PhysicalAssetPropertyWldtEvent<?> actionHandlerInput(Object body, String k){
+        //TODO
+
+        switch ((sensorType) this.mapInput.get(k).get(3)) {
+            case BUTTON:
+                return null;
+            case PIR:
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * A method that handles the behaviour upon receiving an action given the body of the action and the outPut key of the map of all output devices.
+     * @param body body of the action received.
+     * @param k key of the OutputSensors map on which the action is done.
+     * @return a new PhysicalAssetPropertyWldtEvent if the specified output Type requires it, null otherwise.
      */
     public PhysicalAssetPropertyWldtEvent<?> actionHandlerOutput(Object body, String k){
         switch ((outputType) this.mapOutput.get(k).get(3)) {
@@ -154,44 +201,6 @@ public class RaspBPhysicalAdapterConfiguration {
                 return null;
         }
     }
-
-    private void ledActionHandler(Object body, DigitalOutput led){
-        if (body.equals(1)) {
-            led.high();
-        } else if (body.equals(0)) {
-            led.low();
-        } else {
-            System.out.println("Error - wrong action body received.");
-        }
-    }
-
-
-
-    /*public void actionBehaviour(DigitalOutput digitalOutput, String actionKey, Object body){
-
-
-        if (body.equals(1)) {
-
-            digitalOutput.high();
-
-
-
-            led.high();
-            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
-            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-        } else {
-            led.low();
-            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
-            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
-        }
-    }*/
-
-
-
-
-
-
-
 
     /**
      * A method that creates a new instance of a pi4j input sensor.
