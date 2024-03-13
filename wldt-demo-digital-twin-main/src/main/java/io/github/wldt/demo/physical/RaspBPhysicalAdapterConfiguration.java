@@ -225,45 +225,65 @@ public class RaspBPhysicalAdapterConfiguration {
     private void addListenerButton(DigitalInput button, String event){
         button.addListener(s -> {
             try{
-                if (s.state() == DigitalState.LOW) {
+                this.listenerBehaviour(s, event);
+                /*if (s.state() == DigitalState.LOW) {
                     if (!this.events.contains(event)) {
                         System.out.println("\nBUTTON PRESSED\n");
                         this.events.add(event);
                     }
-                }
+                }*/
             }catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
+
+    //TODO Possibile implementazione come interfaccia dei comportamenti da avere riguardo addListenerPir, ovvero:
+
+    private void listenerBehaviour(DigitalStateChangeEvent s, String event){
+        if (s.state() == DigitalState.LOW) {
+            if (!this.events.contains(event)) {
+                System.out.println("\nEVENT DETECTED\n"); //stampa generica
+                this.events.add(event);
+            }
+        }
+    }
+
+    /**
+     * A method that implements a basic construction of a listener for a PIR that generates an event upon detecting movement.
+     * @param pir the DigitalInput sensor to which a listener should be added.
+     * @param event The event that is generated upon verifying a basic condition.
+     */
     private void addListenerPir(DigitalInput pir, String event) {
         pir.addListener(s -> {
             try{
-                if (s.state() == DigitalState.LOW) {
+                this.listenerBehaviour(s, event);
+                /*if (s.state() == DigitalState.LOW) {
                     if (!this.events.contains(event)) {
                         System.out.println("\nMOVEMENT DETECTED\n");
                         this.events.add(event);
                     }
-                }
+                }*/
             }catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
+    /**
+     * A method that adds listeners to the input sensors only if they have an event associated to them.
+     */
     public void startListeners() {
+        System.out.println("[RraspberryPI -> Adding listeners...]");
         this.mapInput.forEach( (k, v) -> {
             if(v.get(1) != null) {
-                System.out.println("Stampo il sensorType: " + v.get(3));
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
                         this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
-                        System.out.println("HO AGGIUNTO IL LISTENER BOTTONE\n");
                         break;
                     case PIR:
                         this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
-                        System.out.println("HO AGGIUNTO IL LISTENER PIR\n");
                         break;
                     default:
                         break;
