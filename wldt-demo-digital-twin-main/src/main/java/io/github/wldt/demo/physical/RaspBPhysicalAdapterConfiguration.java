@@ -259,11 +259,11 @@ public class RaspBPhysicalAdapterConfiguration {
                     case BUTTON:
                         System.out.println("Sono nel case del button, key: " + k);
                         this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
-                        System.out.println("\n HO AGGIUNTO IL LISTENER BOTTONE");
+                        System.out.println("HO AGGIUNTO IL LISTENER BOTTONE\n");
                     case PIR:
                         System.out.println("Sono nel case del PIR, key: " + k);
                         this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
-                        System.out.println("\n HO AGGIUNTO IL LISTENER PIR");
+                        System.out.println("HO AGGIUNTO IL LISTENER PIR\n");
                 }
             }
         });
