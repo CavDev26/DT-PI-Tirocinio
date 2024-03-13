@@ -17,6 +17,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         super(id, configuration);
     }
 
+
+    //TODO moving this behaviour the configuration space.
     @Override
     public void onIncomingPhysicalAction(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent) {
         try{
@@ -98,63 +100,56 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 this.getConfiguration().startListeners();
                 int i = 0;
                 while (i < getConfiguration().getMaximumEvents()) {
-                    if(!getConfiguration().getEvents().isEmpty()) {
-                        getConfiguration().getEvents().forEach( (e) -> {
-                            try {
-                                //TODO Questa cosa funziona ma per qualche motivo mi genera eventi un pelo sbagliati,
-                                //TODO mi accende e spegne il led subito (sia verde che rosso).
-                                //TODO pir invece sembra funzionare.
-                                //TODO da cambiare il body, sicuramente influisce sul corretto funzionamento.
 
-                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, e));
+
+                    if(!getConfiguration().getEventsMap().isEmpty()) {
+
+                        //TODO passare all'utilizzo di una mappa per gli eventi, con eventKey e Body relativo da inviare (attualmente invia l'eventKey come body)
+                        getConfiguration().getEventsMap().forEach( (e, b) -> {
+                            try {
+                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, b));
                                 /*if (e.equals("BUTTON-event-key")) {
                                     publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
                                 }
                                 if (e.equals("PIR-event-key")) {
                                     publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Moved"));
                                 }*/
-                                //Thread.sleep(100); //sleep tra una pubblicazione di un evento e l'altro, da verificare. questo genera dei problemi
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
                         });
-                        i = i + getConfiguration().getEvents().size(); //da verificare quanto valga size
-                        getConfiguration().getEvents().clear();
+                        //TODO da verificare quanto valga size
+                        i = i + getConfiguration().getEventsMap().size();
+                        getConfiguration().getEventsMap().clear();
                     }
+
+                    /*if(!getConfiguration().getEvents().isEmpty()) {
+
+                        //TODO passare all'utilizzo di una mappa per gli eventi, con eventKey e Body relativo da inviare (attualmente invia l'eventKey come body)
+                        getConfiguration().getEvents().forEach( (e) -> {
+                            try {
+                                publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, e));
+                                //if (e.equals("BUTTON-event-key")) {
+                                //    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
+                                //}
+                                //if (e.equals("PIR-event-key")) {
+                                //    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Moved"));
+                                //}
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
+                        //TODO da verificare quanto valga size
+                        i = i + getConfiguration().getEvents().size();
+                        getConfiguration().getEvents().clear();
+                    }*/
                 }
                 System.out.println("\n HO FINITO DI CICLARE; TROPPI EVENTI, CHIUDO PI4J \n");
                 getConfiguration().getPI4J().shutdown();
-                //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
-                //this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
             }catch (Exception e) {
                 e.printStackTrace();
             }
         };
-    }
-
-    private void addListenerButton(DigitalInput button, String event){
-        button.addListener(s -> {
-            try{
-                if (s.state() == DigitalState.LOW) {
-                    System.out.println("BUTTON PRESSED");
-                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Pressed"));
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    private void addListenerPir(DigitalInput pir, String event) {
-        pir.addListener(s -> {
-            try{
-                if (s.state() == DigitalState.LOW) {
-                    System.out.println("MOVEMENT DETECTED");
-                    publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(event, "Moved"));
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent, DigitalOutput led, String PROPERTY_KEY){
@@ -187,6 +182,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         }
     }
 
+    //TODO
     /*private void publishPhysicalRelationshipInstance(){
         try{
             String relatoinshipTarget = "building-hq";

@@ -55,6 +55,8 @@ public class RaspBPhysicalAdapterConfiguration {
     private final static Context pi4j = Pi4J.newAutoContext();
     private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
     private Map<String, ArrayList<?>> mapInput = new HashMap<>();
+
+    private Map<String, String> eventsMap = new HashMap<>();
     private ArrayList<String> events = new ArrayList<>();
 
 
@@ -64,8 +66,8 @@ public class RaspBPhysicalAdapterConfiguration {
         this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
         this.createOutputEntrySensor(led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
 
-        this.createInputEntrySensor(pir, PIR_EVENT_KEY, null, sensorType.PIR);
-        this.createInputEntrySensor(button, BUTTON_EVENT_KEY, null, sensorType.BUTTON);
+        this.createInputEntrySensor(pir, PIR_EVENT_KEY, null, sensorType.PIR, "Movement");
+        this.createInputEntrySensor(button, BUTTON_EVENT_KEY, null, sensorType.BUTTON, "Pressing");
     }
 
     //TODO FUNZOINE DA IMPLEMENTARE DA UTENTE
@@ -112,13 +114,19 @@ public class RaspBPhysicalAdapterConfiguration {
      * @param button the DigitalInput sensor to which a listener should be added.
      * @param event The event that is generated upon verifying a basic condition.
      */
-    private void addListenerButton(DigitalInput button, String event){
+    private void addListenerButton(DigitalInput button, String event, String body){
         button.addListener(s -> {
             if (s.state() == DigitalState.LOW) {
-                if (!this.events.contains(event)) {
+
+                if (!this.eventsMap.containsKey(event)) {
+                    System.out.println("\nBUTTON PRESSED\n");
+                    this.eventsMap.put(event, body);
+                }
+
+                /*if (!this.events.contains(event)) {
                     System.out.println("\nBUTTON PRESSED\n");
                     this.events.add(event);
-                }
+                }*/
             }
         });
     }
@@ -129,12 +137,16 @@ public class RaspBPhysicalAdapterConfiguration {
      * @param pir the DigitalInput sensor to which a listener should be added.
      * @param event The event that is generated upon verifying a basic condition.
      */
-    private void addListenerPir(DigitalInput pir, String event) {
+    private void addListenerPir(DigitalInput pir, String event, String body) {
         pir.addListener(s -> {
             if (s.state() == DigitalState.LOW) {
-                if (!this.events.contains(event)) {
+                /*if (!this.events.contains(event)) {
                     System.out.println("\nMOVEMENT DETECTED\n");
                     this.events.add(event);
+                }*/
+                if (!this.eventsMap.containsKey(event)) {
+                    System.out.println("\nMOVEMENT DETECTED\n");
+                    this.eventsMap.put(event, body);
                 }
             }
         });
@@ -200,13 +212,15 @@ public class RaspBPhysicalAdapterConfiguration {
      * @param eventKey EventKey linked to the input sensor.
      * @param actionKey ActionKey linked to the input sensor.
      * @param type specify the sensor type from the supported ones.
+     * @param eventBody
      */
-    private void createInputEntrySensor(DigitalInput digitalInputSensor, String eventKey, String actionKey, sensorType type) {
+    private void createInputEntrySensor(DigitalInput digitalInputSensor, String eventKey, String actionKey, sensorType type, String eventBody) {
         this.mapInput.put(digitalInputSensor.name(), new ArrayList<>() {{
             add(digitalInputSensor);
             add(eventKey);
             add(actionKey);
             add(type);
+            add(eventBody);
         }});
     }
     /**
@@ -225,10 +239,10 @@ public class RaspBPhysicalAdapterConfiguration {
             if(v.get(1) != null) {
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
-                        this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
+                        this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(2));
                         break;
                     case PIR:
-                        this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
+                        this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1), (String) v.get(2));
                         break;
                     default:
                         break;
@@ -242,6 +256,9 @@ public class RaspBPhysicalAdapterConfiguration {
 
     public ArrayList<String> getEvents(){
         return this.events;
+    }
+    public Map<String, String> getEventsMap(){
+        return this.eventsMap;
     }
 
     public Map<String, ArrayList<?>> getMapOutput() {
