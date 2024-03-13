@@ -255,8 +255,10 @@ public class RaspBPhysicalAdapterConfiguration {
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
                         this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
+                        System.out.println("\n HO AGGIUNTO IL LISTENER BOTTONE");
                     case PIR:
                         this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
+                        System.out.println("\n HO AGGIUNTO IL LISTENER PIR");
                 }
             }
         });
