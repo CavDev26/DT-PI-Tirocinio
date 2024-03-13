@@ -253,9 +253,9 @@ public class RaspBPhysicalAdapterConfiguration {
     }
 
     public void startListeners() {
-        System.out.println("\nMAPPA DEGLI INPUT" + this.mapInput + "\n");
         this.mapInput.forEach( (k, v) -> {
             if(v.get(1) != null) {
+                System.out.println("\nEVENTI: " + this.events + "\n");
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
                         this.addListenerButton((DigitalInput) v.get(0), (String) v.get(1));
@@ -264,6 +264,7 @@ public class RaspBPhysicalAdapterConfiguration {
                         this.addListenerPir((DigitalInput) v.get(0), (String) v.get(1));
                         System.out.println("\n HO AGGIUNTO IL LISTENER PIR");
                 }
+                System.out.println("\nEVENTI: " + this.events + "Sto ciclando");
             }
         });
     }
