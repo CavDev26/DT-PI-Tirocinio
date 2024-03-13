@@ -5,6 +5,10 @@ import it.wldt.adapter.physical.*;
 import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
+import it.wldt.exception.EventBusException;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
@@ -51,10 +55,20 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 getConfiguration().getMapOutput().forEach((k, v) -> {
 
                     if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
-                        //TODO
-                        notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
+                        System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
+                                + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+                        try {
+                            publishPhysicalAssetPropertyWldtEvent(getConfiguration().actionHandlerOutput(physicalAssetActionWldtEvent.getBody(), k));
+                        } catch (EventBusException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                        //notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
+
+
             }else if (physicalAssetActionWldtEvent != null && getConfiguration().getMapInput().values().stream().anyMatch(obj -> obj.contains(physicalAssetActionWldtEvent.getActionKey()))) {
                 getConfiguration().getMapInput().forEach((k, v) -> {
                     if(v.contains(physicalAssetActionWldtEvent.getActionKey())) {
@@ -84,11 +98,18 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
         }
     }
 
+
     private void notifyLedPropertyEvent(PhysicalAssetActionWldtEvent<?> physicalAssetActionWldtEvent, DigitalOutput led, String PROPERTY_KEY){
         try {
             //TODO
             System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                     + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
+
+
+            //this.getConfiguration().actionBehaviour(physicalAssetActionWldtEvent.getActionKey(), physicalAssetActionWldtEvent.getBody());
+
+
+
             if (physicalAssetActionWldtEvent.getBody().equals(1)) {
                 led.high();
                 PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);

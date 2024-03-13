@@ -4,6 +4,8 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
 import it.wldt.adapter.physical.*;
+import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
+import it.wldt.exception.EventBusException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +13,10 @@ import java.util.Map;
 
 public class RaspBPhysicalAdapterConfiguration {
 
+    private final static Context pi4j = Pi4J.newAutoContext();
+    private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
+    private Map<String, ArrayList<?>> mapInput = new HashMap<>();
+    private Map<String, String> eventsMap = new HashMap<>();
     private static final int MAXIMUM_EVENTS = 10;
 
     /**
@@ -45,21 +51,11 @@ public class RaspBPhysicalAdapterConfiguration {
     private DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", PIN_LED, DigitalState.LOW, DigitalState.LOW);
 
 
-    /**
-     * Declaration of the internal data structures
-     */
-    private final static Context pi4j = Pi4J.newAutoContext();
-    private Map<String, ArrayList<?>> mapOutput = new HashMap<>();
-    private Map<String, ArrayList<?>> mapInput = new HashMap<>();
-
-    private Map<String, String> eventsMap = new HashMap<>();
-
-
     //TODO METODO DA IMPLEMENTARE DA UTENTE
     public RaspBPhysicalAdapterConfiguration() {
-        this.createOutputEntrySensor(led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
-        this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
-        this.createOutputEntrySensor(led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY, outputType.LED);
+        this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY, outputType.LED);
+        this.createOutputEntrySensor(led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY, outputType.LED);
 
         this.createInputEntrySensor(pir, PIR_EVENT_KEY, null, sensorType.PIR, "Movement");
         this.createInputEntrySensor(button, BUTTON_EVENT_KEY, null, sensorType.BUTTON, "Pressing");
@@ -137,6 +133,54 @@ public class RaspBPhysicalAdapterConfiguration {
         });
     }
 
+    public PhysicalAssetPropertyWldtEvent<?> actionHandlerOutput(Object body, String k){
+        switch ((outputType) this.mapOutput.get(k).get(3)) {
+            case LED:
+                this.ledActionHandler(body, (DigitalOutput) this.mapOutput.get(k).get(0));
+                try {
+                    PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>((String) this.mapOutput.get(k).get(1), (Integer) body);
+                    return  newPhysicalPropertyEvent;
+                } catch (EventBusException e) {
+                    throw new RuntimeException(e);
+                }
+            default:
+                return null;
+        }
+    }
+
+    private void ledActionHandler(Object body, DigitalOutput led){
+        if (body.equals(1)) {
+            led.high();
+        } else if (body.equals(0)) {
+            led.low();
+        } else {
+            System.out.println("Error - wrong action body received.");
+        }
+    }
+
+
+
+    /*public void actionBehaviour(DigitalOutput digitalOutput, String actionKey, Object body){
+
+
+        if (body.equals(1)) {
+
+            digitalOutput.high();
+
+
+
+            led.high();
+            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 1);
+            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+        } else {
+            led.low();
+            PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>(PROPERTY_KEY, 0);
+            publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+        }
+    }*/
+
+
+
 
 
 
@@ -183,12 +227,14 @@ public class RaspBPhysicalAdapterConfiguration {
      * @param digitalOutputSensor DigitalOutput device
      * @param propertyKey propertyKey linked to the output sensor
      * @param actionKey actionKey linked to the output device
+     * @param type the Output device type, chosen within the supported ones.
      */
-    private void createOutputEntrySensor(DigitalOutput digitalOutputSensor, String propertyKey, String actionKey ) {
+    private void createOutputEntrySensor(DigitalOutput digitalOutputSensor, String propertyKey, String actionKey, outputType type) {
         this.mapOutput.put(digitalOutputSensor.name(), new ArrayList<>() {{
             add(digitalOutputSensor);
             add(propertyKey);
             add(actionKey);
+            add(type);
         }});
     }
     /**
@@ -209,11 +255,18 @@ public class RaspBPhysicalAdapterConfiguration {
         }});
     }
     /**
-     * An enum that rapresets all the Input sensors types that are supprted.
+     * An enum that represents all the Input sensors types that are currently supported..
      */
     private enum sensorType {
         BUTTON,
         PIR
+    }
+
+    /**
+     * An enum that represents all the output devices' types that are currently supported.
+     */
+    private enum outputType {
+        LED
     }
     /**
      * A method that adds listeners to the input sensors only if they have an event associated to them.
@@ -252,5 +305,11 @@ public class RaspBPhysicalAdapterConfiguration {
     }
     public int getMaximumEvents(){
         return MAXIMUM_EVENTS;
+    }
+    public void ledHigh(DigitalOutput led) {
+        led.high();
+    }
+    public void ledLow(DigitalOutput led) {
+        led.low();
     }
 }
