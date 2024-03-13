@@ -177,49 +177,15 @@ public class RaspBPhysicalAdapterConfiguration {
     }
 
     /**
-     *
+     *A method where to fill all the data structures
      */
     private void fullFillMaps() {
-
         this.createOutputEntrySensor(led_Pir.name(), led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
         this.createOutputEntrySensor(ledOff.name(), ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
         this.createOutputEntrySensor(led.name(), led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
 
         this.createInputEntrySensor(pir.name(), pir, PIR_EVENT_KEY, null, sensorType.PIR);
         this.createInputEntrySensor(button.name(), button, BUTTON_EVENT_KEY, null, sensorType.BUTTON);
-        //map containing name as key; (sensor, Property, action) as value
-        /*this.mapOutput.put(led_Pir.name(), new ArrayList<>() {{
-            add(led_Pir);
-            add(LED_PIR_ON_OFF_PROPERTY_KEY);
-            add(LED_PIR_ON_OFF_ACTION_KEY);
-        }});
-
-        this.mapOutput.put(ledOff.name(), new ArrayList<>() {{
-            add(ledOff);
-            add(LED_OFF_PROPERTY_KEY);
-            add(LED_OFF_ACTION_KEY);
-        }});
-        this.mapOutput.put(led.name(), new ArrayList<>() {{
-            add(led);
-            add(LED_ON_OFF_PROPERTY_KEY);
-            add(LED_ON_OFF_ACTION_KEY);
-        }});*/
-
-        /*this.mapInput.put(pir.name(), new ArrayList<>() {{
-            add(pir);
-            add(PIR_EVENT_KEY);
-        }});
-        this.mapInput.put(button.name(), new ArrayList<>() {{
-            add(button);
-            add(BUTTON_EVENT_KEY);
-        }});*/
-
-        //this.mapOutput.put(led_Pir.name(), led_Pir);
-        //this.mapOutput.put(ledOff.name(), ledOff);
-        //this.mapOutput.put(led.name(), led);
-
-        //this.mapInput.put(pir.name(), pir);
-        //this.mapInput.put(button.name(), button);
     }
 
     /**
@@ -279,19 +245,14 @@ public class RaspBPhysicalAdapterConfiguration {
         });
     }
 
-    /*public DigitalInput getInputSensorByName(String Name){
-        return (DigitalInput)mapInput.get(Name).get(0);
-    }
-    public DigitalOutput getOutputSensorByName(String Name){
-        return (DigitalOutput)mapOutput.get(Name).get(0);
-    }
-    public String getSensorEvent(String Name){
-        return (String)mapInput.get(Name).get(1);
-    }*/
-
-
     public RaspBPhysicalAdapterConfiguration() {
-        this.fullFillMaps();
+        this.createOutputEntrySensor(led_Pir.name(), led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(ledOff.name(), ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
+        this.createOutputEntrySensor(led.name(), led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY);
+
+        this.createInputEntrySensor(pir.name(), pir, PIR_EVENT_KEY, null, sensorType.PIR);
+        this.createInputEntrySensor(button.name(), button, BUTTON_EVENT_KEY, null, sensorType.BUTTON);
+        //this.fullFillMaps();
     }
 
     public RaspBPhysicalAdapterConfiguration(DigitalInput pir, DigitalInput button, DigitalOutput led_Pir, DigitalOutput ledOff, DigitalOutput led, Map<String, ArrayList<?>> mapOutput, Map<String, ArrayList<?>> mapInput) {
