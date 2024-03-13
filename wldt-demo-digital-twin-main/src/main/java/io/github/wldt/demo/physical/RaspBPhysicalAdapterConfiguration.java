@@ -222,18 +222,18 @@ public class RaspBPhysicalAdapterConfiguration {
         //this.mapInput.put(button.name(), button);
     }
 
+    /**
+     * A method that implements a basic construction of a listener for a button that generates an event upon detecting movement.
+     * @param button the DigitalInput sensor to which a listener should be added.
+     * @param event The event that is generated upon verifying a basic condition.
+     */
     private void addListenerButton(DigitalInput button, String event){
         button.addListener(s -> {
-            try{
-                this.listenerBehaviour(s, event);
-                /*if (s.state() == DigitalState.LOW) {
-                    if (!this.events.contains(event)) {
-                        System.out.println("\nBUTTON PRESSED\n");
-                        this.events.add(event);
-                    }
-                }*/
-            }catch (Exception e) {
-                e.printStackTrace();
+            if (s.state() == DigitalState.LOW) {
+                if (!this.events.contains(event)) {
+                    System.out.println("\nBUTTON PRESSED\n");
+                    this.events.add(event);
+                }
             }
         });
     }
@@ -241,14 +241,6 @@ public class RaspBPhysicalAdapterConfiguration {
 
     //TODO Possibile implementazione come interfaccia dei comportamenti da avere riguardo addListenerPir, ovvero:
 
-    private void listenerBehaviour(DigitalStateChangeEvent s, String event){
-        if (s.state() == DigitalState.LOW) {
-            if (!this.events.contains(event)) {
-                System.out.println("\nEVENT DETECTED\n"); //stampa generica
-                this.events.add(event);
-            }
-        }
-    }
 
     /**
      * A method that implements a basic construction of a listener for a PIR that generates an event upon detecting movement.
@@ -257,16 +249,11 @@ public class RaspBPhysicalAdapterConfiguration {
      */
     private void addListenerPir(DigitalInput pir, String event) {
         pir.addListener(s -> {
-            try{
-                this.listenerBehaviour(s, event);
-                /*if (s.state() == DigitalState.LOW) {
-                    if (!this.events.contains(event)) {
-                        System.out.println("\nMOVEMENT DETECTED\n");
-                        this.events.add(event);
-                    }
-                }*/
-            }catch (Exception e) {
-                e.printStackTrace();
+            if (s.state() == DigitalState.LOW) {
+                if (!this.events.contains(event)) {
+                    System.out.println("\nMOVEMENT DETECTED\n");
+                    this.events.add(event);
+                }
             }
         });
     }
