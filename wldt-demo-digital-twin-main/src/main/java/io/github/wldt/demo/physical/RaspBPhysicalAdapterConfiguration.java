@@ -223,8 +223,10 @@ public class RaspBPhysicalAdapterConfiguration {
         button.addListener(s -> {
             try{
                 if (s.state() == DigitalState.LOW) {
-                    System.out.println("\nBUTTON PRESSED\n");
-                    this.events.add(event);
+                    if (!this.events.contains(event)) {
+                        System.out.println("\nBUTTON PRESSED\n");
+                        this.events.add(event);
+                    }
                 }
             }catch (Exception e) {
                 e.printStackTrace();
@@ -236,8 +238,10 @@ public class RaspBPhysicalAdapterConfiguration {
         pir.addListener(s -> {
             try{
                 if (s.state() == DigitalState.LOW) {
-                    System.out.println("\nMOVEMENT DETECTED\n");
-                    this.events.add(event);
+                    if (!this.events.contains(event)) {
+                        System.out.println("\nMOVEMENT DETECTED\n");
+                        this.events.add(event);
+                    }
                 }
             }catch (Exception e) {
                 e.printStackTrace();
