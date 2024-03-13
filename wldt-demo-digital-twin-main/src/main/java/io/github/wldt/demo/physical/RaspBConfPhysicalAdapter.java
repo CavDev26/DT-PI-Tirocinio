@@ -98,6 +98,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 this.getConfiguration().startListeners();
                 int i = 0;
                 while (i < getConfiguration().getMaximumEvents()) {
+
+                    System.out.println("\nEVENTI-ARRAY: " + getConfiguration().getEvents() + "\n");
                     if(!getConfiguration().getEvents().isEmpty()) {
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
@@ -108,7 +110,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                                 //TODO da cambiare il body, sicuramente influisce sul corretto funzionamento.
 
                                 publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
-                                Thread.sleep(100); //sleep tra una pubblicazione di un evento e l'altro, da verificare. questo genera dei problemi
+                                //Thread.sleep(100); //sleep tra una pubblicazione di un evento e l'altro, da verificare. questo genera dei problemi
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
