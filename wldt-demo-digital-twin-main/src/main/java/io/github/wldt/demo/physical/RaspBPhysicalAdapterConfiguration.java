@@ -133,17 +133,24 @@ public class RaspBPhysicalAdapterConfiguration {
         });
     }
 
+    /**
+     *
+     * @param body
+     * @param k
+     * @return
+     */
     public PhysicalAssetPropertyWldtEvent<?> actionHandlerOutput(Object body, String k){
         switch ((outputType) this.mapOutput.get(k).get(3)) {
             case LED:
                 this.ledActionHandler(body, (DigitalOutput) this.mapOutput.get(k).get(0));
                 try {
-                    PhysicalAssetPropertyWldtEvent<Integer> newPhysicalPropertyEvent = new PhysicalAssetPropertyWldtEvent<>((String) this.mapOutput.get(k).get(1), (Integer) body);
-                    return  newPhysicalPropertyEvent;
+                    return new PhysicalAssetPropertyWldtEvent<>((String) this.mapOutput.get(k).get(1), (Integer) body);
                 } catch (EventBusException e) {
                     throw new RuntimeException(e);
                 }
             default:
+                return null;
+            case GENERICTEST:
                 return null;
         }
     }
@@ -266,7 +273,7 @@ public class RaspBPhysicalAdapterConfiguration {
      * An enum that represents all the output devices' types that are currently supported.
      */
     private enum outputType {
-        LED
+        GENERICTEST, LED
     }
     /**
      * A method that adds listeners to the input sensors only if they have an event associated to them.

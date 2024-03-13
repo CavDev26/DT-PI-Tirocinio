@@ -58,12 +58,16 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                         System.out.println("[RaspPhysicalAdapter] -> Received Action Request: " + physicalAssetActionWldtEvent.getActionKey()
                                 + "with Body: " + physicalAssetActionWldtEvent.getBody() + "\n");
                         try {
-                            publishPhysicalAssetPropertyWldtEvent(getConfiguration().actionHandlerOutput(physicalAssetActionWldtEvent.getBody(), k));
+                            PhysicalAssetPropertyWldtEvent<?> newPhysicalPropertyEvent = getConfiguration().actionHandlerOutput(physicalAssetActionWldtEvent.getBody(), k);
+                            if (newPhysicalPropertyEvent != null){
+                                publishPhysicalAssetPropertyWldtEvent(newPhysicalPropertyEvent);
+                            } else {
+                                //Caso in cui non c'è nessun update delle property e si necessita la sola esecuzione dell'action.
+                            }
+                            //publishPhysicalAssetPropertyWldtEvent(getConfiguration().actionHandlerOutput(physicalAssetActionWldtEvent.getBody(), k));
                         } catch (EventBusException e) {
                             throw new RuntimeException(e);
                         }
-
-
                         //notifyLedPropertyEvent(physicalAssetActionWldtEvent, (DigitalOutput) v.get(0), (String) v.get(1));
                     }
                 });
