@@ -96,8 +96,8 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                 System.out.println(getConfiguration().getPI4J().registry().all() + "\n");
 
                 this.getConfiguration().startListeners();
-
-                for (int i = 0; i<1000; i++) {
+                int i = 0;
+                while (i < getConfiguration().getMaximumEvents()) {
                     if(!getConfiguration().getEvents().isEmpty()) {
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
@@ -108,14 +108,14 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                                 //TODO da cambiare il body, sicuramente influisce sul corretto funzionamento.
 
                                 publishPhysicalAssetEventWldtEvent(new PhysicalAssetEventWldtEvent<>(e, "Pressed"));
-                            } catch (EventBusException ex) {
+                                Thread.sleep(100); //sleep tra una pubblicazione di un evento e l'altro, da verificare. questo genera dei problemi
+                            } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
                         });
+                        i = i + getConfiguration().getEvents().size(); //da verificare quanto valga size
                         getConfiguration().getEvents().clear();
                     }
-                    Thread.sleep(500);
-                    i++;
                 }
 
                 //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
