@@ -4,16 +4,12 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.Pi4J;
 import it.wldt.adapter.physical.*;
-import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class RaspBPhysicalAdapterConfiguration {
-
 
     private static final int MAXIMUM_EVENTS = 10;
 
@@ -57,10 +53,9 @@ public class RaspBPhysicalAdapterConfiguration {
     private Map<String, ArrayList<?>> mapInput = new HashMap<>();
 
     private Map<String, String> eventsMap = new HashMap<>();
-    private ArrayList<String> events = new ArrayList<>();
 
 
-    //TODO FUNZOINE DA IMPLEMENTARE DA UTENTE
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
     public RaspBPhysicalAdapterConfiguration() {
         this.createOutputEntrySensor(led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY);
         this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY);
@@ -70,7 +65,7 @@ public class RaspBPhysicalAdapterConfiguration {
         this.createInputEntrySensor(button, BUTTON_EVENT_KEY, null, sensorType.BUTTON, "Pressing");
     }
 
-    //TODO FUNZOINE DA IMPLEMENTARE DA UTENTE
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
     /**
      * A function that permits to specify all properties, events and action Keys.
      * @return a new instance of PhysicalAssetDescription containing all the specified properties, events, actions.
@@ -108,7 +103,7 @@ public class RaspBPhysicalAdapterConfiguration {
         return pad;
     }
 
-    //TODO FUNZOINE DA IMPLEMENTARE DA UTENTE
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
     /**
      * A method that implements a basic construction of a listener for a button that generates an event upon detecting movement.
      * @param button the DigitalInput sensor to which a listener should be added.
@@ -117,21 +112,15 @@ public class RaspBPhysicalAdapterConfiguration {
     private void addListenerButton(DigitalInput button, String event, String body){
         button.addListener(s -> {
             if (s.state() == DigitalState.LOW) {
-
                 if (!this.eventsMap.containsKey(event)) {
                     System.out.println("\nBUTTON PRESSED\n");
                     this.eventsMap.put(event, body);
                 }
-
-                /*if (!this.events.contains(event)) {
-                    System.out.println("\nBUTTON PRESSED\n");
-                    this.events.add(event);
-                }*/
             }
         });
     }
 
-    //TODO FUNZOINE DA IMPLEMENTARE DA UTENTE
+    //TODO METODO DA IMPLEMENTARE DA UTENTE
     /**
      * A method that implements a basic construction of a listener for a PIR that generates an event upon detecting movement.
      * @param pir the DigitalInput sensor to which a listener should be added.
@@ -140,10 +129,6 @@ public class RaspBPhysicalAdapterConfiguration {
     private void addListenerPir(DigitalInput pir, String event, String body) {
         pir.addListener(s -> {
             if (s.state() == DigitalState.LOW) {
-                /*if (!this.events.contains(event)) {
-                    System.out.println("\nMOVEMENT DETECTED\n");
-                    this.events.add(event);
-                }*/
                 if (!this.eventsMap.containsKey(event)) {
                     System.out.println("\nMOVEMENT DETECTED\n");
                     this.eventsMap.put(event, body);
@@ -212,7 +197,7 @@ public class RaspBPhysicalAdapterConfiguration {
      * @param eventKey EventKey linked to the input sensor.
      * @param actionKey ActionKey linked to the input sensor.
      * @param type specify the sensor type from the supported ones.
-     * @param eventBody
+     * @param eventBody specify the body of the event linked to the sensor.
      */
     private void createInputEntrySensor(DigitalInput digitalInputSensor, String eventKey, String actionKey, sensorType type, String eventBody) {
         this.mapInput.put(digitalInputSensor.name(), new ArrayList<>() {{
@@ -254,9 +239,6 @@ public class RaspBPhysicalAdapterConfiguration {
         return pi4j;
     }
 
-    public ArrayList<String> getEvents(){
-        return this.events;
-    }
     public Map<String, String> getEventsMap(){
         return this.eventsMap;
     }
