@@ -122,12 +122,10 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                         getConfiguration().getEvents().clear();
                     }
                 }
-
+                System.out.println("\n HO FINITO DI CICLARE; TROPPI EVENTI, CHIUDO PI4J \n");
+                getConfiguration().getPI4J().shutdown();
                 //this.addListenerButton(getConfiguration().getInputSensorByName("BUTTON"), getConfiguration().getSensorEvent("BUTTON"));
                 //this.addListenerPir(getConfiguration().getInputSensorByName("PIR"), getConfiguration().getSensorEvent("PIR"));
-
-                //pi4j.shutdown();
-
             }catch (Exception e) {
                 e.printStackTrace();
             }
