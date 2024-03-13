@@ -102,7 +102,15 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
                         System.out.println("\nEVENTI-ARRAY: " + getConfiguration().getEvents() + "\n");
                         getConfiguration().getEvents().forEach( (e) -> {
                             try {
-                                //TODO
+
+
+
+
+                                //TODO PER QUALCHE MOTIVO AGGIUNGE DUE LISTENER PIR, DA CAPIRE PERCHE'.
+
+
+
+
                                 //TODO Questa cosa funziona ma per qualche motivo mi genera eventi un pelo sbagliati,
                                 //TODO mi accende e spegne il led subito (sia verde che rosso).
                                 //TODO pir invece sembra funzionare.

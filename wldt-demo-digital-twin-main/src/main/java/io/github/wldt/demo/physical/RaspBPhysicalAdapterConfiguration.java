@@ -16,6 +16,13 @@ public class RaspBPhysicalAdapterConfiguration {
 
 
     private static final int MAXIMUM_EVENTS = 10;
+
+    /**
+     * For a complete PINOUT documentation, see
+     * <a href="
+     *      https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#schematics-and-mechanical-drawings
+     * ">...</a>
+     */
     private static final int PIN_LED = 27; //PIN 13 = BCM 27
     private static final int PIN_PIR = 4; //PIN 7 = BCM 4
     private static final int PIN_LED_PIR = 17; //PIN 11 = BCM 17
