@@ -255,6 +255,7 @@ public class RaspBPhysicalAdapterConfiguration {
     public void startListeners() {
         this.mapInput.forEach( (k, v) -> {
             if(v.get(1) != null) {
+                System.out.println("Stampo il sensorType: " + v.get(3));
                 switch ((sensorType)v.get(3)){
                     case BUTTON:
                         System.out.println("Sono nel case del button, key: " + k);
