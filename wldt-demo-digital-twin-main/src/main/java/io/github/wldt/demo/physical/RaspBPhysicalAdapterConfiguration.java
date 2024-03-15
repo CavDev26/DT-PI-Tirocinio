@@ -44,17 +44,18 @@ public class RaspBPhysicalAdapterConfiguration {
 
     private final static String BUTTON_EVENT_KEY = "BUTTON-event-key";
 
-    private DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "PIR", PIN_PIR, 0L);
-    private DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "BUTTON", PIN_BUTTON, 3000L);
-    private DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", PIN_LED_PIR, DigitalState.LOW, DigitalState.LOW);
-    private DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", PIN_LED_OFF, DigitalState.LOW, DigitalState.HIGH);
-    private DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", PIN_LED, DigitalState.LOW, DigitalState.LOW);
+    private final DigitalInput pir = createAndConfigDigitalInputPI4j("PIR", "PIR", PIN_PIR, 0L);
+    private final DigitalInput button = createAndConfigDigitalInputPI4j("BUTTON", "BUTTON", PIN_BUTTON, 3000L);
+    private final DigitalOutput led_Pir = createAndConfigDigitalOutputPI4j("LED-PIR", "LED-PIR", PIN_LED_PIR, DigitalState.LOW, DigitalState.LOW);
+    private final DigitalOutput ledOff = createAndConfigDigitalOutputPI4j("LED-OFF", "LED-OFF", PIN_LED_OFF, DigitalState.LOW, DigitalState.HIGH);
+    private final DigitalOutput led = createAndConfigDigitalOutputPI4j("LED-ON", "LED-ON", PIN_LED, DigitalState.LOW, DigitalState.LOW);
 
 
     //TODO METODO DA IMPLEMENTARE DA UTENTE
-    //TODO Probabilmente queste azioni non sono da fare qui.
-    //TODO correggere ordine valori array e relative references.
-    public RaspBPhysicalAdapterConfiguration() {
+    /**
+     * A method where to fill the given data structures using the provided utility methods (createOutputEntrySensor, createInputEntrySensor)
+     */
+    private void fullfillMaps(){
         this.createOutputEntrySensor(led_Pir, LED_PIR_ON_OFF_PROPERTY_KEY, LED_PIR_ON_OFF_ACTION_KEY, outputType.LED);
         this.createOutputEntrySensor(ledOff, LED_OFF_PROPERTY_KEY, LED_OFF_ACTION_KEY, outputType.LED);
         this.createOutputEntrySensor(led, LED_ON_OFF_PROPERTY_KEY, LED_ON_OFF_ACTION_KEY, outputType.LED);
@@ -64,14 +65,12 @@ public class RaspBPhysicalAdapterConfiguration {
     }
 
     //TODO METODO DA IMPLEMENTARE DA UTENTE
-    //TODO spostare a interfaccia.
     /**
      * A function that permits to specify all properties, events and action Keys.
      * @return a new instance of PhysicalAssetDescription containing all the specified properties, events, actions.
      */
     public PhysicalAssetDescription createPhysicalAssetDescription(){
 
-        //TODO Generalize behaviour, with a function that takes all the values as input and fullfills the pad, without needing to implement all the code below.
         PhysicalAssetDescription pad = new PhysicalAssetDescription();
         //TODO fix the insideInRelationShip situation.
         PhysicalAssetRelationship<String> insideInRelationship = null;
@@ -152,19 +151,15 @@ public class RaspBPhysicalAdapterConfiguration {
         }
     }
 
-    //TODO METODO DA IMPLEMENTARE DA UTENTE
-    //TODO fare metodi che eseguano il comportamento in base alle action oper button e pir.
 
 
 
-
-
-
-
-
-
-
-
+    /**
+     * Constructor
+     */
+    public RaspBPhysicalAdapterConfiguration() {
+        this.fullfillMaps();
+    }
 
     /**
      * A method that handles the behaviour upon receiving an action given the body of the action and the input key of the map of all input Sensors.
@@ -311,22 +306,42 @@ public class RaspBPhysicalAdapterConfiguration {
         });
     }
 
-    //TODO add documentation
+    /**
+     * A method that returns PI4J context.
+     * @return PI4J context.
+     */
     public Context getPI4J(){
         return pi4j;
     }
 
+    /**
+     * A method that returns the Events map.
+     * @return EventsMap.
+     */
     public Map<String, String> getEventsMap(){
         return this.eventsMap;
     }
 
+    /**
+     * A method that returns the output sensors Map.
+     * @return mapOutput.
+     */
     public Map<String, ArrayList<?>> getMapOutput() {
         return mapOutput;
     }
 
+    /**
+     * A method that returns the input sensor Map.
+     * @return mapInput.
+     */
     public Map<String, ArrayList<?>> getMapInput() {
         return mapInput;
     }
+
+    /**
+     * A method that retuns the maximum number of events for the system.
+     * @return MAXIMUM_EVENTS.
+     */
     public int getMaximumEvents(){
         return MAXIMUM_EVENTS;
     }

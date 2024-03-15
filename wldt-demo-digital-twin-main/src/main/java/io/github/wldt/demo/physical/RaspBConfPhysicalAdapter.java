@@ -1,15 +1,10 @@
 package io.github.wldt.demo.physical;
 
-import com.pi4j.io.gpio.digital.*;
 import it.wldt.adapter.physical.*;
 import it.wldt.adapter.physical.event.PhysicalAssetActionWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetEventWldtEvent;
 import it.wldt.adapter.physical.event.PhysicalAssetPropertyWldtEvent;
 import it.wldt.exception.EventBusException;
-
-import java.util.ArrayList;
-import java.util.Map;
-
 
 public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBPhysicalAdapterConfiguration> {
 
@@ -21,7 +16,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
     public void onAdapterStart() {
         try {
             new Thread(publishPhysicalAssetDescription()).start();
-            new Thread(deviceEmulation()).start();
+            new Thread(startPIDevice()).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,7 +98,7 @@ public class RaspBConfPhysicalAdapter extends ConfigurablePhysicalAdapter<RaspBP
      *
      * @return
      */
-    private Runnable deviceEmulation() {
+    private Runnable startPIDevice() {
         return () -> {
             try{
                 System.out.println("[RaspPhysicalAdapter] -> Starting physical device (PI)...");
